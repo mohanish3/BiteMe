@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "731893701791",
+    "firebase_url": "https://biteme-1c46b.firebaseio.com",
+    "project_id": "biteme-1c46b",
+    "storage_bucket": "biteme-1c46b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731893701791:android:f04dfb9f8f2e77b91496aa",
+        "android_client_info": {
+          "package_name": "com.example.biteme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731893701791-7f8adabokcov2c0ct7jdv179t10fjv4k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPoss7wFRou6HmG9JWWcjN6Sy0bT_ZNi8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731893701791-7f8adabokcov2c0ct7jdv179t10fjv4k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
