@@ -24,8 +24,9 @@ class MyApp extends StatelessWidget {
         bottomAppBarColor: Colors.indigo[700],
         accentColor: Colors.blue[800],
         errorColor: Colors.pink,
-        buttonColor: Colors.indigo,
+        buttonColor: Colors.white,
         cardColor: Colors.white,
+        canvasColor: Color.fromARGB(248, 255, 255, 255),
         textSelectionColor: Colors.amber[700],
         iconTheme: IconThemeData(
           color: Colors.black87,
