@@ -13,7 +13,11 @@ class ProductList extends StatelessWidget {
 
   void productDetails(int index) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => ProductDetails(product: productList[index],)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => ProductDetails(
+                  product: productList[index],
+                )));
   }
 
   @override
@@ -58,9 +62,23 @@ class ProductList extends StatelessWidget {
                         subtitle: Text('Available'),
                         leading: Container(
                           padding: EdgeInsets.all(3),
-                          child: Image.network(product.getImageUrl == null
-                              ? ''
-                              : product.getImageUrl),
+                          child: Image.network(
+                            product.getImageUrl == null
+                                ? ''
+                                : product.getImageUrl,
+                            loadingBuilder: (BuildContext context, Widget child,
+                                ImageChunkEvent loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return CircularProgressIndicator(
+                                  backgroundColor: Colors.blueGrey[200],
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes
+                                      : null,
+                                );
+                            },
+                          ),
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

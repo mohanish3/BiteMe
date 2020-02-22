@@ -25,26 +25,28 @@ class ProductDetails extends StatelessWidget {
           ),
         ],
       ),
-      body: Center(
-          child: Column(children: <Widget>[
-        Container(
-          margin: EdgeInsets.all(15),
-          decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border:
-                  Border.all(width: 4, color: Theme.of(context).primaryColor)),
-          child: ClipOval(
-            child: Image.network(
-              product.getImageUrl,
-              fit: BoxFit.fill,
+      body: Column(children: <Widget>[
+        Center(
+          child: Container(
+            margin: EdgeInsets.all(25),
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                    width: 3, color: Theme.of(context).primaryColor)),
+            child: ClipOval(
+              child: Image.network(
+                product.getImageUrl,
+                fit: BoxFit.fill,
+              ),
             ),
           ),
         ),
         Text(
           product.getTitle,
-          style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-        )
-      ])),
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.w400,),
+          textAlign: TextAlign.start,
+        ),
+      ]),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
