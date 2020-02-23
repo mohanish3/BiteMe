@@ -86,12 +86,10 @@ class _LoginPageState extends State<LoginPage> {
             Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.all(25),
-              child: ClipOval(
-                child: Image.asset(
+              child: Image.asset(
                   'assets/images/logo.png',
                   fit: BoxFit.fill,
                 ),
-              ),
             ),
             Container(
               margin: EdgeInsets.all(50),
