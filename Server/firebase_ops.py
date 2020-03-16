@@ -1,5 +1,6 @@
 import pyrebase
 from getpass import getpass
+from secret import getConfig
 
 class FirebaseOps:
 	db = None
@@ -7,17 +8,8 @@ class FirebaseOps:
 	auth = None
 	adminId = None
 
-	def initialize(self):
-		config = {
-			'apiKey': "AIzaSyD8x5UUzscVOWpV6Fol2s840dW6P5wLOEo",
-		    'authDomain': "biteme-1c46b.firebaseapp.com",
-		    'databaseURL': "https://biteme-1c46b.firebaseio.com",
-		    'projectId': "biteme-1c46b",
-		    'storageBucket': "biteme-1c46b.appspot.com",
-		    'messagingSenderId': "731893701791",
-		    'appId': "1:731893701791:web:6466c7fa9b2795051496aa",
-		    'measurementId': "G-98MLKKP9Y1"
-		}
+	def __init__(self):
+		config = getConfig()
 
 		self.firebase = pyrebase.initialize_app(config)
 		self.auth = self.firebase.auth()
@@ -47,7 +39,7 @@ class FirebaseOps:
 		dbRef = self.db
 		for path in pathList:
 			dbRef = dbRef.child(path)
-		dbRef.push(element)
+		dbRef.push(element, self.adminId)
 
 	def update_element(self, pathList, element):
 		dbRef = self.db
