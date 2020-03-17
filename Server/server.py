@@ -12,6 +12,17 @@ api = Api(app)
 def m1():
 	return jsonify({'hello':'world'})
 
+@app.route('/gradeReview', methods =['POST'])
+def review_grade():
+	user = request.args.get('user')
+	product = request.args.get('product')
+	review_text = request.args.get('review')
+	print(user, product, review_text)
+
+	review_rating = (review_model.test_review(review_text) + 1) * 100
+	print('User', user, 'got', review_rating, 'for his review of product', product, '.')
+	return str(review_rating)
+
 if __name__ == '__main__':
 	global review_model, firebaseOps
 

@@ -5,7 +5,8 @@ import string
 from random import randint
 
 from keras import Sequential
-from keras.models import Model, load_model
+from keras.models import Model
+from tensorflow.keras.models import load_model
 from keras.layers import Dense, Input, Dropout, LSTM, Activation
 from keras.layers.embeddings import Embedding
 from keras.preprocessing import sequence
@@ -18,6 +19,10 @@ from nltk.corpus import stopwords
 
 from nltk.stem import WordNetLemmatizer 
 from nltk.tokenize import word_tokenize 
+
+#Fix for reviews threading error
+import keras.backend.tensorflow_backend as tb
+tb._SYMBOLIC_SCOPE.value = True
 
 class ReviewModel:
 	lemmatizer = WordNetLemmatizer() 
@@ -33,8 +38,7 @@ class ReviewModel:
 
 	def test_review(self, review):
 		y = self.model.predict(pad_sequences([next(self.texts_to_sequences([review]))], maxlen=200))
-		print(y)
-		return np.argmax(y[0])
+		return int(np.argmax(y[0]))
 
 	def load_modelh5(self):
 		print("Loading model...")
