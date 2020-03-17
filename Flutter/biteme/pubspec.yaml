@@ -62,6 +62,8 @@ flutter:
   assets:
     - assets/images/waiting.png
     - assets/images/logo.png
+    - assets/images/product_placeholder.png
+    - assets/images/google_logo.png
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
