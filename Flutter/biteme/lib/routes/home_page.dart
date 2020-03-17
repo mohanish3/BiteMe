@@ -1,5 +1,9 @@
 import 'package:biteme/routes/login_page.dart';
+import 'package:biteme/widgets/appbar.dart';
+import 'package:biteme/widgets/customiconbutton.dart';
+import 'package:biteme/widgets/grid_list.dart';
 import 'package:biteme/widgets/profile_details.dart';
+import 'package:biteme/widgets/search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -7,7 +11,6 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 
 import 'package:biteme/models/product.dart';
-import 'package:biteme/widgets/products_list.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -96,122 +99,102 @@ class _HomePageState extends State<HomePage>
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).canvasColor,
-      appBar: AppBar(
-        title: Text(
-          'Bite Me!',
-          style: TextStyle(fontSize: 22),
-        ),
-        backgroundColor: Theme.of(context).primaryColor,
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.refresh,
-            ),
-            onPressed: () => _displaySnackbar(context, 'TODO yet!'),
-          ),
-        ],
-      ),
       body: TabBarView(controller: _tabController, children: [
-        SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 10,
-              ),
-              ProductList(context: context, productList: _productList),
+        SafeArea(
+            child: Container(
+                child: Column(children: <Widget>[
+          CustomAppBar(
+            icons: <Widget>[
+              CustomIconButton(icon: Icons.star, onPressed: () {}),
+              CustomIconButton(icon: Icons.refresh, onPressed: () {})
             ],
           ),
-        ),
-        Container(color: Colors.blue),
+          SingleChildScrollView(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    "Bite Me!",
+                    style: TextStyle(
+                        fontSize: 40,
+                        fontFamily: 'OpenSans',
+                        fontWeight: FontWeight.w400),
+                  ),
+                ),
+                GridList(
+                  title: "Recommendations",
+                  productList: _productList,
+                ),
+                GridList(
+                  title: "Most reviewed",
+                  productList: _productList,
+                ),
+                //ProductList(context: context, productList: _productList),
+              ],
+            ),
+          ),
+        ]))),
+        SearchTab(scaffoldKey: _scaffoldKey,),
         Container(color: Colors.red),
         Container(color: Colors.amber),
-        Container(
-          width: MediaQuery.of(context).size.width,
-          margin: EdgeInsets.all(3.5),
-          child: Card(
-            elevation: 7,
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  ProfileDetails(user: user),
-                  FlatButton(
-                    onPressed: signOutGoogle,
-                    child: Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.close,
-                          color: Theme.of(context).errorColor,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          'Logout',
-                          style: TextStyle(color: Theme.of(context).errorColor),
-                        )
-                      ],
-                    )),
-                  )
-                ]),
-          ),
-        ),
+        ProfileDetails(user: user, signOutGoogle: signOutGoogle)
       ]),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-            border: Border(
-          top: BorderSide(width: 0.5, color: Colors.blueGrey[800]),
-        )),
-        child: TabBar(
-          controller: _tabController,
-          labelColor: Theme.of(context).primaryColor,
-          unselectedLabelColor: Theme.of(context).iconTheme.color,
-          indicatorSize: TabBarIndicatorSize.label,
-          indicatorPadding: EdgeInsets.all(5.0),
-          indicatorColor: Theme.of(context).textSelectionColor,
-          tabs: [
-            Tab(
-              icon: Icon(Icons.home),
-              child: Text(
-                'Home',
-                overflow: TextOverflow.fade,
-                textScaleFactor: 0.8,
+      bottomNavigationBar: Card(
+        margin: EdgeInsets.all(0),
+        elevation: 10,
+        child: Container(
+          child: TabBar(
+            controller: _tabController,
+            labelColor: Theme.of(context).primaryColor,
+            unselectedLabelColor: Theme.of(context).iconTheme.color,
+            indicatorSize: TabBarIndicatorSize.label,
+            indicatorPadding: EdgeInsets.all(5.0),
+            indicatorColor: Theme.of(context).textSelectionColor,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.home),
+                child: Text(
+                  'Home',
+                  overflow: TextOverflow.fade,
+                  textScaleFactor: 0.8,
+                ),
               ),
-            ),
-            Tab(
-              icon: Icon(Icons.search),
-              child: Text(
-                'Search',
-                overflow: TextOverflow.fade,
-                textScaleFactor: 0.8,
+              Tab(
+                icon: Icon(Icons.search),
+                child: Text(
+                  'Search',
+                  overflow: TextOverflow.fade,
+                  textScaleFactor: 0.8,
+                ),
               ),
-            ),
-            Tab(
-              icon: Icon(Icons.whatshot),
-              child: Text(
-                'Hot deals',
-                overflow: TextOverflow.fade,
-                textScaleFactor: 0.69,
+              Tab(
+                icon: Icon(Icons.whatshot),
+                child: Text(
+                  'Hot deals',
+                  overflow: TextOverflow.fade,
+                  textScaleFactor: 0.69,
+                ),
               ),
-            ),
-            Tab(
-              icon: Icon(Icons.attach_money),
-              child: Text(
-                'Rewards',
-                overflow: TextOverflow.fade,
-                textScaleFactor: 0.76,
+              Tab(
+                icon: Icon(Icons.attach_money),
+                child: Text(
+                  'Rewards',
+                  overflow: TextOverflow.fade,
+                  textScaleFactor: 0.76,
+                ),
               ),
-            ),
-            Tab(
-              icon: Icon(Icons.person),
-              child: Text(
-                'Profile',
-                overflow: TextOverflow.fade,
-                textScaleFactor: 0.8,
+              Tab(
+                icon: Icon(Icons.person),
+                child: Text(
+                  'Profile',
+                  overflow: TextOverflow.fade,
+                  textScaleFactor: 0.8,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

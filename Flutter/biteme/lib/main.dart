@@ -15,18 +15,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: Colors.indigo[700],
+      statusBarColor: Color.fromRGBO(247, 228, 255, 0),
+      statusBarIconBrightness: Brightness.dark
     ));
     return MaterialApp(
       title: 'Bite Me',
       theme: ThemeData(
-        primaryColor: Colors.indigo[700],
-        bottomAppBarColor: Colors.indigo[700],
-        accentColor: Colors.blue[800],
-        errorColor: Colors.pink,
+        primaryColor: Color.fromRGBO(58, 110, 207, 1),
+        accentColor: Color.fromRGBO(220, 220, 255, 1),
+        errorColor: Colors.pink[300],
         buttonColor: Colors.white,
         cardColor: Colors.white,
-        canvasColor: Color.fromARGB(248, 255, 255, 255),
+        canvasColor: Color.fromRGBO(225, 235, 245, 1),
         textSelectionColor: Colors.amber[700],
         iconTheme: IconThemeData(
           color: Colors.black87,
