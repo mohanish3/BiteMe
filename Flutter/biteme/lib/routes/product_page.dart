@@ -1,25 +1,26 @@
 import 'package:biteme/models/product.dart';
-import 'package:biteme/widgets/appbar.dart';
-import 'package:biteme/widgets/customiconbutton.dart';
+import 'package:biteme/tabs/product/product_details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:biteme/tabs/product/product_review.dart';
 
-class ProductDetails extends StatefulWidget {
+class ProductPage extends StatefulWidget {
   final Product product;
 
-  ProductDetails({@required this.product});
+  ProductPage({@required this.product});
 
-  _ProductDetailsState createState() => _ProductDetailsState(product: product);
+  _ProductPageState createState() => _ProductPageState(product: product);
 }
 
-class _ProductDetailsState extends State<ProductDetails>
+class _ProductPageState extends State<ProductPage>
     with WidgetsBindingObserver, SingleTickerProviderStateMixin {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   final Product product;
 
   TabController _tabController;
   int _selectedIndex;
 
-  _ProductDetailsState({this.product}) {
+  _ProductPageState({this.product}) {
     _selectedIndex = 0;
   }
 
@@ -46,61 +47,12 @@ class _ProductDetailsState extends State<ProductDetails>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Theme.of(context).canvasColor,
       body: SafeArea(
           child: TabBarView(controller: _tabController, children: [
-        Column(children: <Widget>[
-          CustomAppBar(
-            icons: <Widget>[
-              CustomIconButton(
-                  icon: Icons.arrow_back_ios,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  }),
-              CustomIconButton(icon: Icons.refresh, onPressed: () {})
-            ],
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width / 2,
-            margin: EdgeInsets.fromLTRB(100, 20, 100, 20),
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              color: Theme.of(context).cardColor,
-            ),
-            child: FadeInImage.assetNetwork(
-              width: 5,
-              fadeInCurve: Curves.fastOutSlowIn,
-              placeholder: 'assets/images/product_placeholder.png',
-              image: product.getImageUrl,
-              fit: BoxFit.fill,
-            ),
-          ),
-          Expanded(
-              child: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
-            ),
-            alignment: Alignment.topLeft,
-            padding: EdgeInsets.fromLTRB(30, 25, 10, 0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  product.getTitle,
-                  style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'OpenSans'),
-                  overflow: TextOverflow.fade,
-                ),
-              ],
-            ),
-          )),
-        ]),
-        Container(color: Colors.yellow),
+        ProductDetails(product: product),
+        ProductReview(product: product, scaffoldKey: _scaffoldKey,),
         Container(color: Colors.blue)
       ])),
       bottomNavigationBar: Card(

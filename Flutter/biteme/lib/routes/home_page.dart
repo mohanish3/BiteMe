@@ -1,9 +1,9 @@
 import 'package:biteme/routes/login_page.dart';
-import 'package:biteme/widgets/appbar.dart';
-import 'package:biteme/widgets/customiconbutton.dart';
+import 'package:biteme/widgets/custom_app_bar.dart';
+import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/widgets/grid_list.dart';
-import 'package:biteme/widgets/profile_details.dart';
-import 'package:biteme/widgets/search.dart';
+import 'file:///C:/Storage/Personal/Coding/Github/BiteMe/Flutter/biteme/lib/tabs/home/profile_details.dart';
+import 'file:///C:/Storage/Personal/Coding/Github/BiteMe/Flutter/biteme/lib/tabs/home/search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -131,7 +131,6 @@ class _HomePageState extends State<HomePage>
                   title: "Most reviewed",
                   productList: _productList,
                 ),
-                //ProductList(context: context, productList: _productList),
               ],
             ),
           ),

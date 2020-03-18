@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:biteme/routes/home_page.dart';
 import 'package:biteme/routes/login_page.dart';
 
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         ),
         fontFamily: 'Quicksand',
       ),
-      home: LoginPage(),
+      home: LoginPage(logOut: false,),
     );
   }
 }

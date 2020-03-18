@@ -20,15 +20,14 @@ class _LoginPageState extends State<LoginPage> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   GoogleSignIn googleSignIn;
   FirebaseUser user;
-  bool logOut;
   bool showSignIn;
 
-  _LoginPageState({this.logOut}) {
+  _LoginPageState({logOut}) {
     googleSignIn = GoogleSignIn();
 
     showSignIn = false;
 
-    logOutUser(this.logOut).then((value) {});
+    logOutUser(logOut).then((value) {});
 
     isLoggedIn().then((value) {
       if (value) {

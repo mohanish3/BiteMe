@@ -1,5 +1,5 @@
-import 'package:biteme/widgets/appbar.dart';
-import 'package:biteme/widgets/customiconbutton.dart';
+import 'package:biteme/widgets/custom_app_bar.dart';
+import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
