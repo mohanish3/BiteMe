@@ -1,5 +1,5 @@
 import 'package:biteme/models/product.dart';
-import 'package:biteme/routes/product_details.dart';
+import 'package:biteme/routes/product_page.dart';
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatelessWidget {
@@ -14,7 +14,7 @@ class ProductCard extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProductDetails(
+                  builder: (context) => ProductPage(
                         product: product,
                       )));
         },
