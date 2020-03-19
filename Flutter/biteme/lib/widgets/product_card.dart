@@ -22,10 +22,6 @@ class ProductCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.all(Radius.circular(20)),
-            boxShadow: <BoxShadow>[
-              BoxShadow(
-                  color: Theme.of(context).canvasColor, blurRadius: 15, spreadRadius: 10),
-            ],
           ),
           margin: EdgeInsets.symmetric(vertical: 10),
           padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),

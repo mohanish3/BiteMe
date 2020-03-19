@@ -4,21 +4,12 @@ import 'package:flutter/material.dart';
 
 class GridList extends StatelessWidget {
   List<Product> productList;
-  final String title;
 
-  GridList({this.productList, this.title});
+  GridList({this.productList});
 
   @override
   Widget build(BuildContext context) {
     return Column(children: <Widget>[
-      Container(
-        padding: EdgeInsets.fromLTRB(15, 10, 0, 0),
-        alignment: Alignment.topLeft,
-        child: Text(
-          title,
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
-        ),
-      ),
       Container(
         margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
         width: MediaQuery.of(context).size.width,

@@ -1,4 +1,5 @@
 import 'package:biteme/models/review.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 //Bottom modal sheet widget
@@ -7,6 +8,7 @@ class AddReview extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
 
   AddReview({this.addReview, this.scaffoldKey});
+
 
   @override
   _AddReviewState createState() => _AddReviewState();
@@ -41,7 +43,7 @@ class _AddReviewState extends State<AddReview> {
     }
   }
 
-  void addData() {
+  void addData() async {
     final String enteredTitle = titleController.text;
     final String enteredDescription = descriptionController.text;
 
@@ -63,12 +65,16 @@ class _AddReviewState extends State<AddReview> {
       return;
     }
 
+    FirebaseUser user;
+    user = await FirebaseAuth.instance.currentUser();
     widget.addReview(Review(
         title: enteredTitle,
         description: enteredDescription,
-        likes: 0,
+        likes: [],
         rating: selectedStars,
-        reviewer: 'Mohanish Mhatre'));
+        authorName: user.displayName,
+        authorId: user.uid
+    ));
 
     Navigator.of(context).pop();
   }

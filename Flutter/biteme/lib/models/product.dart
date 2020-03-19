@@ -1,18 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:uuid/uuid.dart';
+import 'package:biteme/models/review.dart';
+import 'package:firebase_database/firebase_database.dart';
 
 //Model for each Product
 class Product {
-  String id;
-  String title;
-  String imageUrl;
+  final String id;
+  final String title;
+  final String imageUrl;
+  final String description;
+  List<Review> reviewList;
 
   Product(
-      {@required this.title, this.imageUrl}) {
-    var uuid = Uuid();
-    this.id = 'product'+uuid.v4(); // Gets unique ID for each product
-  }
+      {this.id, this.title, this.imageUrl, this.description});
 
   String get getId {
     return id;
@@ -32,10 +30,10 @@ class Product {
     'title': title,
   };
 
-  //Converts to Product from Json format
-  Product.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        title = json['title'];
-
+  Product.fromJson(Map<String, dynamic> json) :
+        id = json['key'],
+        title = json['value']["name"],
+        description = json['value']['description'],
+        imageUrl = json['value']["image"];
 
 }
