@@ -1,16 +1,8 @@
 import 'package:biteme/routes/login_page.dart';
-import 'package:biteme/widgets/custom_app_bar.dart';
-import 'package:biteme/widgets/custom_icon_button.dart';
-import 'package:biteme/widgets/grid_list.dart';
-import 'file:///C:/Storage/Personal/Coding/Github/BiteMe/Flutter/biteme/lib/tabs/home/profile_details.dart';
-import 'file:///C:/Storage/Personal/Coding/Github/BiteMe/Flutter/biteme/lib/tabs/home/search.dart';
+import 'package:biteme/tabs/home/profile_details.dart';
+import 'package:biteme/tabs/home/feed.dart';
+import 'package:biteme/tabs/home/search.dart';
 import 'package:flutter/material.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
-
-import 'package:biteme/models/product.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -35,27 +27,10 @@ class _HomePageState extends State<HomePage>
 
   TabController _tabController;
 
-  List<Product> _productList;
-
-  FirebaseDatabase database;
-  DatabaseReference _userRef;
-
   int _selectedIndex;
 
   _HomePageState({this.user, this.googleSignIn}) {
     _selectedIndex = 0;
-    database = new FirebaseDatabase();
-    _userRef = database.reference().child('user');
-    _productList = [
-      Product(
-          title: 'Snickers',
-          imageUrl:
-              'https://cdn.gymbeam.com/media/catalog/product/cache/926507dc7f93631a094422215b778fe0/s/n/snickers_hi-protein_peanut_butter.png'),
-      Product(
-          title: 'Kitkat',
-          imageUrl:
-              'https://image3.mouthshut.com/images/imagesp/925039961s.jpg')
-    ];
   }
 
   void signOutGoogle() async {
@@ -100,42 +75,10 @@ class _HomePageState extends State<HomePage>
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).canvasColor,
       body: TabBarView(controller: _tabController, children: [
-        SafeArea(
-            child: Container(
-                child: Column(children: <Widget>[
-          CustomAppBar(
-            icons: <Widget>[
-              CustomIconButton(icon: Icons.star, onPressed: () {}),
-              CustomIconButton(icon: Icons.refresh, onPressed: () {})
-            ],
-          ),
-          SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                Container(
-                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    "Bite Me!",
-                    style: TextStyle(
-                        fontSize: 40,
-                        fontFamily: 'OpenSans',
-                        fontWeight: FontWeight.w400),
-                  ),
-                ),
-                GridList(
-                  title: "Recommendations",
-                  productList: _productList,
-                ),
-                GridList(
-                  title: "Most reviewed",
-                  productList: _productList,
-                ),
-              ],
-            ),
-          ),
-        ]))),
-        SearchTab(scaffoldKey: _scaffoldKey,),
+        Feed(),
+        SearchTab(
+          scaffoldKey: _scaffoldKey,
+        ),
         Container(color: Colors.red),
         Container(color: Colors.amber),
         ProfileDetails(user: user, signOutGoogle: signOutGoogle)

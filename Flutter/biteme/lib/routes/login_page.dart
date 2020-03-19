@@ -1,6 +1,8 @@
 import 'dart:math';
 
 import 'package:biteme/routes/home_page.dart';
+import 'package:biteme/utilities/firebase_functions.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -76,6 +78,17 @@ class _LoginPageState extends State<LoginPage> {
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
     this.user = user;
+
+    FirebaseUserMetadata metaData = currentUser.metadata;
+    if(metaData.creationTime == metaData.lastSignInTime) {
+      DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid]);
+      ref.set({
+        'reviews': [],
+        'credits': 0,
+        'activity': {}
+      });
+    }
+
     return 'signInWithGoogle succeeded: $user';
   }
 

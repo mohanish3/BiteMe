@@ -2,6 +2,7 @@ import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/widgets/searches_list.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:biteme/routes/search_page.dart';
 
 class SearchTab extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
@@ -42,19 +43,20 @@ class _SearchTabState extends State<SearchTab> {
       searches.removeAt(index);
       searches.insert(0, selected);
     });
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: selected),));
   }
 
   void searchItem() {
-    String searchText = searchController.text;
+    String searchQuery = searchController.text;
     searchController.clear();
 
     if (!mounted) return; //Fix for any memory leaks due to setState called after dispose()
     setState(() {
-      searches.insert(0, searchText);
+      searches.insert(0, searchQuery);
     });
     sharedPreferences.setStringList('searches', searches);
 
-    //Open search page and query database
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: searchQuery),));
   }
 
   void deleteSearch(int index) {
