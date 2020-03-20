@@ -39,8 +39,7 @@ class FirebaseOps:
 		dbRef = self.db
 		for path in pathList:
 			dbRef = dbRef.child(path)
-		print(dbRef)
-		dbRef.push(element, self.adminId)
+		dbRef.set(element, self.adminId)
 
 	def update_element(self, pathList, element):
 		dbRef = self.db
