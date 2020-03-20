@@ -3,6 +3,7 @@ import pandas as pd
 
 import string
 from random import randint
+import csv
 
 from keras import Sequential
 from keras.models import Model
@@ -36,9 +37,9 @@ class ReviewModel:
 		#print(self.test_review('This is something I\'ve been using for the last year. A better product simply can\'t be found. Thank you Healthkart. Looking for such better products in the future. Healthy and delicious product that helps a lot. Looking forward for more products with such quality. The taste and health factor of the nutrients just makes it even better. Would buy again.'))
 		#Gets rating 8/10 after training with 10000 samples
 
-	def test_review(self, review):
+	def get_review_rating(self, review):
 		y = self.model.predict(pad_sequences([next(self.texts_to_sequences([review]))], maxlen=200))
-		return int(np.argmax(y[0]))
+		return (int(np.argmax(y[0])) + 1) * randint(1, 10)
 
 	def load_modelh5(self):
 		print("Loading model...")
@@ -47,19 +48,28 @@ class ReviewModel:
 	def train_model(self):
 		print('Loading data...')
 
-		f = open('train.ft.txt')
+		# f = open('train_data.txt')
+		# train_data = []
+		# TRAIN_SAMPLES = 10000
+		# sample_count = 0
+		# for line in f:
+		# 	if(sample_count == TRAIN_SAMPLES):
+		# 		break
+		# 	X = line[11:]
+		# 	label = int(line[9])
+		# 	y = randint((label-1) * 5, (label * 5) - 1)
+		# 	train_data.append([X, y])
+		# 	sample_count += 1
+		# f.close()
 		train_data = []
-		TRAIN_SAMPLES = 10000
-		sample_count = 0
-		for line in f:
-			if(sample_count == TRAIN_SAMPLES):
-				break
-			X = line[11:]
-			label = int(line[9])
-			y = randint((label-1) * 5, (label * 5) - 1)
-			train_data.append([X, y])
-			sample_count += 1
-		f.close()
+		with open('train_data.txt') as f:
+			reader = csv.reader(f, delimiter='\t')
+			next(reader)
+			for line in reader:
+				if(line[1] == '__label1__'):
+					train_data.append([line[8], randint(0, 4)])
+				else:
+					train_data.append([line[8], randint(5, 9)])
 
 		train_df = pd.DataFrame(columns=["text", "quality"], data=train_data)
 		clean_df = self.clean_data_dl(train_df, 'text')
@@ -75,7 +85,7 @@ class ReviewModel:
 		#generate output values
 		y = to_categorical(np.array(clean_df['quality'].values), num_classes=10)
 
-		self.model.fit(X, y, batch_size=128, epochs = 5)
+		self.model.fit(X, y, batch_size=64, epochs = 3)
 		self.model.save('model.h5')
 
 	def init_model(self):

@@ -19,7 +19,7 @@ def review_grade():
 	review_text = request.args.get('review')
 	print(user, product, review_text)
 
-	review_rating = (review_model.test_review(review_text) + 1) * 100
+	review_rating = review_model.get_review_rating(review_text)
 	print('User', user, 'got', review_rating, 'for his review of product', product, '.')
 	return str(review_rating)
 
