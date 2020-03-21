@@ -15,8 +15,6 @@ class FirebaseOps:
 		self.auth = self.firebase.auth()
 		self.db = self.firebase.database()
 
-		self.authenticate()
-
 	def authenticate(self):
 		loggedIn = False
 		while not loggedIn:
@@ -46,3 +44,26 @@ class FirebaseOps:
 		for path in pathList:
 			dbRef = dbRef.child(path)
 		dbRef.update(element)
+
+	def get_element(self, pathList, queryParams):
+		dbRef = self.db
+		for path in pathList:
+			dbRef = dbRef.child(path)
+		for query in queryParams:
+			if(query[0] == 'order_by_child'):
+				dbRef = dbRef.order_by_child(query[1])
+			elif(query[0] == 'equal_to'):
+				dbRef = dbRef.equal_to(query[1])
+			elif(query[0] == 'start_at'):
+				dbRef = dbRef.start_at(query[1])
+			elif(query[0] == 'end_at'):
+				dbRef = dbRef.end_at(query[1])
+			elif(query[0] == 'limit_to_first'):
+				dbRef = dbRef.limit_to_first(query[1])
+			elif(query[0] == 'limit_to_last'):
+				dbRef = dbRef.limit_to_last(query[1])
+			elif(query[0] == 'order_by_key'):
+				dbRef = dbRef.order_by_key()
+			elif(query[0] == 'order_by_value'):
+				dbRef = dbRef.order_by_value()
+		return dbRef.get().val()
