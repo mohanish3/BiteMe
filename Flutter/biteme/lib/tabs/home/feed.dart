@@ -4,9 +4,14 @@ import 'package:biteme/utilities/firebase_functions.dart';
 import 'package:biteme/widgets/custom_app_bar.dart';
 import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/widgets/grid_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Feed extends StatelessWidget {
+  final FirebaseUser user;
+
+  Feed({this.user});
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -17,7 +22,7 @@ class Feed extends StatelessWidget {
           CustomIconButton(
               icon: Icons.bookmark,
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BookmarkPage(),
+                    builder: (context) => BookmarkPage(user:user),
                   ))),
           CustomIconButton(icon: Icons.refresh, onPressed: () {})
         ],
@@ -59,6 +64,7 @@ class Feed extends StatelessWidget {
                     });
                     return GridList(
                       productList: _recommendationsList,
+                      user: user,
                     );
                   }
                 }),
@@ -85,6 +91,7 @@ class Feed extends StatelessWidget {
                     });
                     return GridList(
                       productList: _mostReviewedList,
+                      user: user,
                     );
                   }
                 }),

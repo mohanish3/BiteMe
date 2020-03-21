@@ -1,5 +1,4 @@
 from fuzzywuzzy import fuzz
-from firebase_ops import FirebaseOps
 import pandas as pd
 
 class SearchOps:
@@ -11,6 +10,7 @@ class SearchOps:
 
 	def search_query(self, query, pathList):
 		productsOrderedDict = self.firebaseOps.get_element(pathList, [])
+		
 		productsList = []
 		for key, value in productsOrderedDict.items():
 			productsList.append([key, value['name'], 0])
@@ -19,12 +19,13 @@ class SearchOps:
 		df = df.sort_values('ratio_score', ascending=False)
 		df = df[df['ratio_score'] > 70]
 		df = df['id'].tolist()
+
 		productsList = []
 		for key, value in productsOrderedDict.items():
 			if(key in df):
 				productsList.append({'key':key, 'value':value})
 		return {'results':productsList}
 
-if(__name__ == '__main__'):
-	search = SearchOps(FirebaseOps())
-	print(search.search_query('Snick', ['products']))
+# if(__name__ == '__main__'):
+# 	search = SearchOps(FirebaseOps())
+# 	print(search.search_query('Snick', ['products']))

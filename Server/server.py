@@ -4,7 +4,6 @@ from flask_jsonpify import jsonify
 from firebase_ops import FirebaseOps
 #from review_model import ReviewModel
 from search_ops import SearchOps
-
 app = Flask(__name__)
 api = Api(app)
 

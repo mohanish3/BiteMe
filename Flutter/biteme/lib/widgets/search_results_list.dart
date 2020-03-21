@@ -1,11 +1,13 @@
 import 'package:biteme/models/product.dart';
 import 'package:biteme/widgets/product_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultsList extends StatelessWidget {
   final List<Product> searchResultsList;
+  final FirebaseUser user;
 
-  SearchResultsList({this.searchResultsList});
+  SearchResultsList({this.searchResultsList, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +23,7 @@ class SearchResultsList extends StatelessWidget {
             children: List.generate(searchResultsList.length, (index) {
               return ProductCard(
                 product: searchResultsList[index],
+                user: user,
               );
             })));
   }

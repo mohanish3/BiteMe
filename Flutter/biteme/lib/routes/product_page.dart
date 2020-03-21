@@ -1,5 +1,8 @@
 import 'package:biteme/models/product.dart';
 import 'package:biteme/tabs/product/product_details.dart';
+import 'package:biteme/utilities/firebase_functions.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:biteme/tabs/product/product_review.dart';
@@ -7,7 +10,40 @@ import 'package:biteme/tabs/product/product_review.dart';
 class ProductPage extends StatefulWidget {
   final Product product;
 
-  ProductPage({@required this.product});
+  ProductPage({@required this.product}) {
+    FirebaseAuth.instance.currentUser().then((user) {
+      DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'viewedProducts']);
+      ref.once().then((snapshot) {
+        //Binary search to find least element greater than the key
+        List<dynamic> productsViewedList;
+        if(snapshot.value == null)
+          productsViewedList = [];
+        else
+          productsViewedList = new List<String>.from(snapshot.value);
+        int lb = 0;
+        int ub = productsViewedList.length;
+        while(lb < ub) {
+          int mid = ((lb + ub)/2).floor();
+          if(productsViewedList[mid].compareTo(product.getId) <= 0)
+            lb = mid + 1;
+          else
+            ub = mid;
+        }
+
+        //Insert in the list if the productId does not already exist in it
+        if(lb == 0) 
+          productsViewedList.insert(0, product.getId);
+        else if(productsViewedList[lb - 1] == product.getId) {
+          return;
+        }
+        else {
+          productsViewedList.insert(lb, product.getId);
+        }
+
+        ref.set(productsViewedList);
+      });
+    });
+  }
 
   _ProductPageState createState() => _ProductPageState(product: product);
 }

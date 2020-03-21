@@ -1,14 +1,16 @@
 import 'package:biteme/models/review.dart';
+import 'package:biteme/utilities/firebase_functions.dart';
+import 'package:biteme/utilities/server_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 //Bottom modal sheet widget
 class AddReview extends StatefulWidget {
-  final Function addReview;
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final String productId;
 
-  AddReview({this.addReview, this.scaffoldKey});
-
+  AddReview({this.scaffoldKey, this.productId});
 
   @override
   _AddReviewState createState() => _AddReviewState();
@@ -67,15 +69,67 @@ class _AddReviewState extends State<AddReview> {
 
     FirebaseUser user;
     user = await FirebaseAuth.instance.currentUser();
-    widget.addReview(Review(
-        title: enteredTitle,
-        description: enteredDescription,
-        likes: [],
-        rating: selectedStars,
-        authorName: user.displayName,
-        authorId: user.uid
-    ));
 
+    bool alreadyReviewed = false;
+    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'reviewedProducts']);
+    ref.once().then((snapshot) {
+      //Binary search to find least element greater than the key
+      List<dynamic> productsReviewedList;
+      if(snapshot.value == null)
+        productsReviewedList = [];
+      else
+        productsReviewedList = new List<String>.from(snapshot.value);
+      int lb = 0;
+      int ub = productsReviewedList.length;
+      while(lb < ub) {
+        int mid = ((lb + ub)/2).floor();
+        if(productsReviewedList[mid].compareTo(widget.productId) <= 0)
+          lb = mid + 1;
+        else
+          ub = mid;
+      }
+
+      //Insert in the list if the productId does not already exist in it
+      if(lb == 0)
+        productsReviewedList.insert(0, widget.productId);
+      else if(productsReviewedList[lb - 1] == widget.productId) {
+        alreadyReviewed = true;
+        return;
+      }
+      else {
+        productsReviewedList.insert(lb, widget.productId);
+      }
+
+
+      /*ServerFunctions.postRequest([
+          'gradeReview'
+        ], [
+          ['user', user.uid],
+          ['product', widget.productId],
+          ['review', enteredDescription]
+        ]).then((value){DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'credits']);
+      ref.once().then((credits) =>
+        ref.set(int.parse(value) + credits.value)
+      );*/
+      Review review = Review(
+          title: enteredTitle,
+          description: enteredDescription,
+          likes: [],
+          rating: selectedStars,
+          authorName: user.displayName,
+          authorId: user.uid);
+          DatabaseReference reviewsRef = FirebaseFunctions.getTraversedChild(
+              ['products', widget.productId, 'reviews']);
+          DatabaseReference newRef = reviewsRef.push();
+          newRef.set(review.toJson());
+      //});
+      ref.set(productsReviewedList);
+    });
+
+    if(alreadyReviewed) {
+      print("ALREADY Done!");
+      _displaySnackbar(context, 'Already reviewed!');
+    }
     Navigator.of(context).pop();
   }
 
