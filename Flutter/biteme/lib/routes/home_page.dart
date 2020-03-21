@@ -75,9 +75,10 @@ class _HomePageState extends State<HomePage>
       key: _scaffoldKey,
       backgroundColor: Theme.of(context).canvasColor,
       body: TabBarView(controller: _tabController, children: [
-        Feed(),
+        Feed(user:user),
         SearchTab(
           scaffoldKey: _scaffoldKey,
+          user: user,
         ),
         Container(color: Colors.red),
         Container(color: Colors.amber),

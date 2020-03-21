@@ -2,8 +2,8 @@ from flask import Flask, request, redirect, url_for
 from flask_restful import Resource, Api
 from flask_jsonpify import jsonify
 from firebase_ops import FirebaseOps
-from review_model import ReviewModel
-
+#from review_model import ReviewModel
+from search_ops import SearchOps
 app = Flask(__name__)
 api = Api(app)
 
@@ -19,14 +19,24 @@ def review_grade():
 	review_text = request.args.get('review')
 	print(user, product, review_text)
 
-	review_rating = review_model.get_review_rating(review_text)
+	review_rating = 0
+	#review_rating = review_model.get_review_rating(review_text)
 	print('User', user, 'got', review_rating, 'for his review of product', product, '.')
 	return str(review_rating)
 
+@app.route('/searchProduct', methods =['POST'])
+def search_query():
+	query = request.args.get('query')
+	return search_ops.search_query(query, ['products'])
+
 if __name__ == '__main__':
-	global review_model, firebaseOps
+	global review_model, firebaseOps, search_ops
 
 	firebaseOps = FirebaseOps()
-	review_model = ReviewModel()
+	firebaseOps.authenticate()
+
+	search_ops = SearchOps(firebaseOps)
+
+	#review_model = ReviewModel()
 	
 	app.run(host = '0.0.0.0', debug=False, port=3000)

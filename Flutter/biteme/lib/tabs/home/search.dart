@@ -1,13 +1,15 @@
 import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/widgets/searches_list.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:biteme/routes/search_page.dart';
 
 class SearchTab extends StatefulWidget {
   final GlobalKey<ScaffoldState> scaffoldKey;
+  final FirebaseUser user;
 
-  SearchTab({this.scaffoldKey});
+  SearchTab({this.scaffoldKey, this.user});
 
   _SearchTabState createState() => _SearchTabState();
 }
@@ -43,7 +45,7 @@ class _SearchTabState extends State<SearchTab> {
       searches.removeAt(index);
       searches.insert(0, selected);
     });
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: selected),));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: selected, user: widget.user,),));
   }
 
   void searchItem() {
@@ -56,7 +58,7 @@ class _SearchTabState extends State<SearchTab> {
     });
     sharedPreferences.setStringList('searches', searches);
 
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: searchQuery),));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchQueryPage(searchQuery: searchQuery, user: widget.user,),));
   }
 
   void deleteSearch(int index) {

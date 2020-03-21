@@ -100,37 +100,39 @@ class _ReviewCardState extends State<ReviewCard> {
                             height: 35,
                             margin: EdgeInsets.only(right: 2),
                             alignment: Alignment.center,
-                            child: FlatButton(
-                              padding: EdgeInsets.all(0),
-                              splashColor: Colors.transparent,
-                              highlightColor: Colors.transparent,
-                              child: isLiked
-                                  ? Icon(
-                                      Icons.thumb_up,
-                                      color: Colors.green,
-                                      size: 25,
-                                    )
-                                  : Icon(
-                                      Icons.thumb_up,
-                                      color: Colors.grey,
-                                      size: 25,
-                                    ),
-                              onPressed: () {
-                                if (isLiked) {
-                                  setState(() {
-                                    review.unlikeReview(
-                                        user.uid, widget.productId);
-                                    isLiked = false;
-                                  });
-                                } else {
-                                  setState(() {
-                                    review.likeReview(
-                                        user.uid, widget.productId);
-                                    isLiked = true;
-                                  });
-                                }
-                              },
-                            ))
+                            child: user.uid == review.authorId
+                                ? Container()
+                                : FlatButton(
+                                    padding: EdgeInsets.all(0),
+                                    splashColor: Colors.transparent,
+                                    highlightColor: Colors.transparent,
+                                    child: isLiked
+                                        ? Icon(
+                                            Icons.thumb_up,
+                                            color: Colors.green,
+                                            size: 25,
+                                          )
+                                        : Icon(
+                                            Icons.thumb_up,
+                                            color: Colors.grey,
+                                            size: 25,
+                                          ),
+                                    onPressed: () {
+                                      if (isLiked) {
+                                        setState(() {
+                                          review.unlikeReview(
+                                              user.uid, widget.productId);
+                                          isLiked = false;
+                                        });
+                                      } else {
+                                        setState(() {
+                                          review.likeReview(
+                                              user.uid, widget.productId);
+                                          isLiked = true;
+                                        });
+                                      }
+                                    },
+                                  ))
                       ],
                     ),
                   ),

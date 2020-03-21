@@ -1,11 +1,13 @@
 import 'package:biteme/models/product.dart';
 import 'package:biteme/widgets/product_card.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class GridList extends StatelessWidget {
   List<Product> productList;
+  final FirebaseUser user;
 
-  GridList({this.productList});
+  GridList({this.productList, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +24,7 @@ class GridList extends StatelessWidget {
                 crossAxisSpacing: 20),
             scrollDirection: Axis.horizontal,
             children: productList
-                .map((product) => ProductCard(product: product))
+                .map((product) => ProductCard(product: product, user: user,))
                 .toList()),
       )
     ]);
