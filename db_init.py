@@ -10,6 +10,8 @@ product1 = {
   'id': 1,
   'name': 'PROTIEN POWDER BEST MUSKLE',
   'company': 'BEST MUSKLE PVT LTD',
+  'avg_rating': 1,
+  'likes': 2,
   'sources': [
     {
       'id': 1,
@@ -58,7 +60,10 @@ user1 = {
       'timestamp': 20200123192905,
       'time_spent': 4
     }
-  ] # products visited by user
+  ], # products visited by user
+  'likes': [1], # products liked by user
+  'bookmarks': [],
+  'following': [1]
 }
 
 user2 = {
@@ -72,7 +77,10 @@ user2 = {
       'timestamp': 20200123193532,
       'time_spent': 4
     }
-  ]
+  ],
+  'likes': [1],
+  'bookmarks': [],
+  'following': [1]
 }
 
 # insert sample items into db
