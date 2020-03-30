@@ -1,6 +1,5 @@
 import 'package:biteme/models/review.dart';
 import 'package:biteme/utilities/firebase_functions.dart';
-import 'package:firebase_database/firebase_database.dart';
 
 //Model for each Product
 class Product {
@@ -49,7 +48,7 @@ class Product {
   }
 
   bookmark(List<String> bookmarks, String userId, String pid) {
-    FirebaseFunctions.getTraversedChild(['users', userId, 'bookmarks'])
+    FirebaseFunctions.getTraversedChild(['users', userId, 'history', 'bookmarks'])
         .once()
         .then((snapshot) {
       bookmarks =
@@ -65,13 +64,13 @@ class Product {
           ub = mid;
       }
       bookmarks.insert(lb, pid);
-      FirebaseFunctions.getTraversedChild(['users', userId, 'bookmarks'])
+      FirebaseFunctions.getTraversedChild(['users', userId, 'history', 'bookmarks'])
           .set(bookmarks);
     });
   }
 
   unBookmark(List<String> bookmarks, String userId, String pid) {
-    FirebaseFunctions.getTraversedChild(['users', userId, 'bookmarks'])
+    FirebaseFunctions.getTraversedChild(['users', userId, 'history', 'bookmarks'])
         .once()
         .then((snapshot) {
       bookmarks =
@@ -83,7 +82,7 @@ class Product {
         int mid = ((lb + ub) / 2).floor();
         if (bookmarks[mid] == pid) {
           bookmarks.removeAt(mid);
-          FirebaseFunctions.getTraversedChild(['users', userId, 'bookmarks'])
+          FirebaseFunctions.getTraversedChild(['users', userId, 'history', 'bookmarks'])
               .set(bookmarks);
           return;
         } else if (bookmarks[mid].compareTo(pid) < 0)
@@ -92,7 +91,7 @@ class Product {
           ub = mid - 1;
       }
       bookmarks.insert(lb, pid);
-      FirebaseFunctions.getTraversedChild(['users', userId, 'bookmarks'])
+      FirebaseFunctions.getTraversedChild(['users', userId, 'history', 'bookmarks'])
           .set(bookmarks);
     });
   }
@@ -103,5 +102,4 @@ class Product {
         title = json['value']["name"],
         description = json['value']['description'],
         imageUrl = json['value']["image"];
-
 }

@@ -39,7 +39,7 @@ class Review {
     if(userId == authorId)
       return false;
     FirebaseFunctions.getTraversedChild(
-            ['products', productId, 'reviews', id, 'likes'])
+            ['products', productId, 'history', 'reviews', id, 'likes'])
         .once()
         .then((snapshot) {
           if(snapshot.value == null)
@@ -58,7 +58,7 @@ class Review {
       }
       likes.insert(lb, userId);
       FirebaseFunctions.getTraversedChild(
-          ['products', productId, 'reviews', id, 'likes']).set(likes);
+          ['products', productId, 'history','reviews', id, 'likes']).set(likes);
     });
     return true;
   }
@@ -66,7 +66,7 @@ class Review {
   //Assumes user has liked
   void unlikeReview(String userId, String productId) {
     FirebaseFunctions.getTraversedChild(
-            ['products', productId, 'reviews', id, 'likes'])
+            ['products', productId, 'history', 'reviews', id, 'likes'])
         .once()
         .then((snapshot) {
       likes = new List<String>.from(snapshot.value);
@@ -78,7 +78,7 @@ class Review {
         if (userId.compareTo(likes[mid]) == 0) {
           likes.removeAt(mid);
           FirebaseFunctions.getTraversedChild(
-              ['products', productId, 'reviews', id, 'likes']).set(likes);
+              ['products', productId, 'history', 'reviews', id, 'likes']).set(likes);
           return;
         } else if (userId.compareTo(likes[mid]) > 0)
           lb = mid + 1;

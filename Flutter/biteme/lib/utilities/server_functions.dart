@@ -6,8 +6,12 @@ import 'package:http/http.dart';
 class ServerFunctions {
   static const serverIp = 'http://192.168.43.41:3000';
 
-  static Future<dynamic> getRequest(List<List<String>> args) async {
+  static dynamic getRequest(List<String> pathList, List<List<String>> args) async {
     String urlRequest = serverIp;
+
+    for (var path in pathList) {
+      urlRequest = urlRequest + '/' + path;
+    }
 
     for (int i = 0; i < args.length; i++) {
       if (i == 0)
@@ -21,15 +25,15 @@ class ServerFunctions {
       if (response.statusCode == 200)
         return response.body;
       else
-        return 'error';
+        return null;
     } on TimeoutException catch (_) {
-      return 'error';
+      return null;
     } on SocketException catch (_) {
-      return 'error';
+      return null;
     }
   }
 
-  static Future<dynamic> postRequest(
+  static dynamic postRequest(
       List<String> pathList, List<List<String>> args) async {
     String urlRequest = serverIp;
 
@@ -53,11 +57,11 @@ class ServerFunctions {
       if (response.statusCode == 200)
         return response.body;
       else
-        return 'error';
+        return null;
     } on TimeoutException catch (_) {
-      return 'error';
+      return null;
     } on SocketException catch (_) {
-      return 'error';
+      return null;
     }
   }
 }

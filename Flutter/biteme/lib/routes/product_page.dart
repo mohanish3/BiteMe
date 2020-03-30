@@ -9,39 +9,73 @@ import 'package:biteme/tabs/product/product_review.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
+  final bool searched;
 
-  ProductPage({@required this.product}) {
+  ProductPage({@required this.product, this.searched}) {
     FirebaseAuth.instance.currentUser().then((user) {
-      DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'viewedProducts']);
+      DatabaseReference ref = FirebaseFunctions.getTraversedChild(
+          ['users', user.uid, 'history', 'viewedProducts']);
       ref.once().then((snapshot) {
         //Binary search to find least element greater than the key
         List<dynamic> productsViewedList;
-        if(snapshot.value == null)
+        if (snapshot.value == null)
           productsViewedList = [];
         else
           productsViewedList = new List<String>.from(snapshot.value);
         int lb = 0;
         int ub = productsViewedList.length;
-        while(lb < ub) {
-          int mid = ((lb + ub)/2).floor();
-          if(productsViewedList[mid].compareTo(product.getId) <= 0)
+        while (lb < ub) {
+          int mid = ((lb + ub) / 2).floor();
+          if (productsViewedList[mid].compareTo(product.getId) <= 0)
             lb = mid + 1;
           else
             ub = mid;
         }
 
         //Insert in the list if the productId does not already exist in it
-        if(lb == 0) 
+        if (lb == 0)
           productsViewedList.insert(0, product.getId);
-        else if(productsViewedList[lb - 1] == product.getId) {
+        else if (productsViewedList[lb - 1] == product.getId) {
           return;
-        }
-        else {
+        } else {
           productsViewedList.insert(lb, product.getId);
         }
 
         ref.set(productsViewedList);
       });
+
+      if (searched) {
+        ref = FirebaseFunctions.getTraversedChild(
+            ['users', user.uid, 'history', 'searchedProducts']);
+        ref.once().then((snapshot) {
+          //Binary search to find least element greater than the key
+          List<dynamic> productsSearchedList;
+          if (snapshot.value == null)
+            productsSearchedList = [];
+          else
+            productsSearchedList = new List<String>.from(snapshot.value);
+          int lb = 0;
+          int ub = productsSearchedList.length;
+          while (lb < ub) {
+            int mid = ((lb + ub) / 2).floor();
+            if (productsSearchedList[mid].compareTo(product.getId) <= 0)
+              lb = mid + 1;
+            else
+              ub = mid;
+          }
+
+          //Insert in the list if the productId does not already exist in it
+          if (lb == 0)
+            productsSearchedList.insert(0, product.getId);
+          else if (productsSearchedList[lb - 1] == product.getId) {
+            return;
+          } else {
+            productsSearchedList.insert(lb, product.getId);
+          }
+
+          ref.set(productsSearchedList);
+        });
+      }
     });
   }
 
@@ -88,7 +122,10 @@ class _ProductPageState extends State<ProductPage>
       body: SafeArea(
           child: TabBarView(controller: _tabController, children: [
         ProductDetails(product: product),
-        ProductReview(product: product, scaffoldKey: _scaffoldKey,),
+        ProductReview(
+          product: product,
+          scaffoldKey: _scaffoldKey,
+        ),
         Container(color: Colors.blue)
       ])),
       bottomNavigationBar: Card(

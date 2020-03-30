@@ -7,8 +7,14 @@ import 'package:flutter/material.dart';
 class ProductCard extends StatefulWidget {
   final Product product;
   final FirebaseUser user;
+  final bool searched;
+  bool bookmarkable;
 
-  ProductCard({@required this.product, this.user});
+  ProductCard(
+      {@required this.product, this.user, this.searched, this.bookmarkable}) {
+    if(this.bookmarkable == null)
+      this.bookmarkable = true;
+  }
 
   _ProductCardState createState() => _ProductCardState();
 }
@@ -25,8 +31,7 @@ class _ProductCardState extends State<ProductCard> {
               context,
               MaterialPageRoute(
                   builder: (context) => ProductPage(
-                        product: widget.product,
-                      )));
+                      product: widget.product, searched: widget.searched)));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -48,14 +53,19 @@ class _ProductCardState extends State<ProductCard> {
                   height: MediaQuery.of(context).size.height * 0.8 / 5,
                 ),
                 StreamBuilder(
-                  stream: FirebaseFunctions.getTraversedChild(['users', widget.user.uid, 'bookmarks']).onValue,
+                  stream: FirebaseFunctions.getTraversedChild(
+                          ['users', widget.user.uid, 'history', 'bookmarks'])
+                      .onValue,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting)
                       return CircularProgressIndicator();
                     else {
-                      bookmarks = snapshot.data.snapshot.value == null ? [] : new List<String>.from(snapshot.data.snapshot.value);
-                      isBookmarked = widget.product.getBookmarkStatus(bookmarks, widget.product.getId);
-                      return Container(
+                      bookmarks = snapshot.data.snapshot.value == null
+                          ? []
+                          : new List<String>.from(snapshot.data.snapshot.value);
+                      isBookmarked = widget.product
+                          .getBookmarkStatus(bookmarks, widget.product.getId);
+                      return widget.bookmarkable ? Container(
                           alignment: Alignment.topRight,
                           child: FlatButton(
                             padding: EdgeInsets.all(0),
@@ -69,28 +79,34 @@ class _ProductCardState extends State<ProductCard> {
                                   )
                                 : Icon(
                                     Icons.bookmark_border,
-                                    color:Theme.of(context).primaryColor,
+                                    color: Theme.of(context).primaryColor,
                                     size: 25,
                                   ),
                             onPressed: () {
-                              print(isBookmarked);
                               if (isBookmarked) {
                                 setState(() {
-                                  widget.product.unBookmark(bookmarks, widget.user.uid, widget.product.getId);
+                                  widget.product.unBookmark(bookmarks,
+                                      widget.user.uid, widget.product.getId);
                                 });
                               } else {
                                 setState(() {
-                                  widget.product.bookmark(bookmarks, widget.user.uid, widget.product.getId);
+                                  widget.product.bookmark(bookmarks,
+                                      widget.user.uid, widget.product.getId);
                                 });
                               }
                             },
-                          ));
+                          )): Container();
                     }
                   },
                 ),
-
               ]),
-              Text(widget.product.getTitle, style: TextStyle(fontSize: 25)),
+              Expanded(
+                  child: Text(
+                widget.product.getTitle,
+                style: TextStyle(fontSize: 25),
+                overflow: TextOverflow.fade,
+                textAlign: TextAlign.center,
+              )),
               Text("Available", style: TextStyle(fontSize: 15)),
             ],
           ),

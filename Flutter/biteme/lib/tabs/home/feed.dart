@@ -12,6 +12,19 @@ class Feed extends StatelessWidget {
 
   Feed({this.user});
 
+  Future<List<Product>> getRecommendations() async {
+    dynamic firebaseSnapshot = await FirebaseFunctions.getTraversedChild(['users', user.uid, 'recommendations']).once();
+    List<dynamic> firebaseList = firebaseSnapshot.value;
+
+    List<Product> _recommendedList = [];
+    for (int i = 0; i < firebaseList.length; i++) {
+      dynamic snapshot = await FirebaseFunctions.getTraversedChild(
+          ['products', firebaseList[i]]).once();
+      _recommendedList.add(Product.fromJson({'key': firebaseList[i], 'value': snapshot.value}));
+    }
+    return _recommendedList;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -49,19 +62,15 @@ class Feed extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300),
               ),
             ),
-            StreamBuilder(
-                stream:
-                    FirebaseFunctions.getTraversedChild(['products']).onValue,
+            FutureBuilder(
+                future:
+                    getRecommendations(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
                     return Center(child: CircularProgressIndicator());
                   else {
-                    List<Product> _recommendationsList = [];
-                    Map<dynamic, dynamic> values = snapshot.data.snapshot.value;
-                    values.forEach((key, value) {
-                      _recommendationsList
-                          .add(Product.fromJson({'key': key, 'value': value}));
-                    });
+                    List<Product> _recommendationsList = snapshot.data == null ? []: snapshot.data;
+
                     return GridList(
                       productList: _recommendationsList,
                       user: user,
