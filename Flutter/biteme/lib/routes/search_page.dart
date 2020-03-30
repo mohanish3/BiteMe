@@ -15,7 +15,7 @@ class SearchQueryPage extends StatelessWidget {
   SearchQueryPage({this.searchQuery, this.user});
 
   Future<List<dynamic>> getSearchResults() async {
-    dynamic results = await ServerFunctions.postRequest([
+    dynamic results = await ServerFunctions.getRequest([
       'searchProduct'
     ], [
       ['query', searchQuery]
@@ -51,11 +51,13 @@ class SearchQueryPage extends StatelessWidget {
                   return Expanded(
                       child: Center(child: CircularProgressIndicator()));
                 else {
+                  if(snapshot.data == null)
+                    return Container(child:Text('Server down', style: TextStyle(fontSize: 30),));
                   List<Product> _searchResultsList = [];
                   for (var json in snapshot.data) {
                     _searchResultsList.add(Product.fromJson(json));
                   }
-                  if(_searchResultsList.isEmpty)
+                  if(_searchResultsList == null || _searchResultsList.isEmpty)
                     return Container(child:Text('No results found!', style: TextStyle(fontSize: 30),));
                   else
                   return SearchResultsList(

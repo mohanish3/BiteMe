@@ -23,7 +23,7 @@ class SearchResultsList extends StatelessWidget {
             children: List.generate(searchResultsList.length, (index) {
               return ProductCard(
                 product: searchResultsList[index],
-                user: user,
+                user: user, searched: true,
               );
             })));
   }

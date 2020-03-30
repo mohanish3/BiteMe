@@ -17,7 +17,7 @@ class SearchOps:
 		df = pd.DataFrame(productsList, columns=['id', 'name', 'ratio_score'])
 		df['ratio_score'] = df.apply(lambda row: fuzz.token_set_ratio(query, row['name']), axis = 1)
 		df = df.sort_values('ratio_score', ascending=False)
-		df = df[df['ratio_score'] > 70]
+		df = df[df['ratio_score'] > 50]
 		df = df['id'].tolist()
 
 		productsList = []

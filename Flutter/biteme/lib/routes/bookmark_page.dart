@@ -44,7 +44,7 @@ class BookmarkPage extends StatelessWidget {
           ),
           StreamBuilder(
               stream: FirebaseFunctions.getTraversedChild(
-                  ['users', user.uid, 'bookmarks']).onValue,
+                  ['users', user.uid, 'history', 'bookmarks']).onValue,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting)
                   return Center(child: CircularProgressIndicator());
