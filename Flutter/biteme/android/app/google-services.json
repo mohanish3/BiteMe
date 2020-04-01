@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "731893701791-k35jmtcp3ojkgfjhi826906lao41adau.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.biteme",
+            "certificate_hash": "67bb3cc0f4bb83c87353b2ba04a91ca5c37accaa"
+          }
+        },
+        {
           "client_id": "731893701791-7f8adabokcov2c0ct7jdv179t10fjv4k.apps.googleusercontent.com",
           "client_type": 3
         }
