@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class CustomIconButton extends StatelessWidget {
   final IconData icon;
   final Function onPressed;
+  final Color color;
 
-  CustomIconButton({this.icon, this.onPressed});
+  CustomIconButton({this.icon, this.onPressed, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +14,9 @@ class CustomIconButton extends StatelessWidget {
         height: 50,
         child: RawMaterialButton(
           shape: CircleBorder(),
-          child: Icon(icon, color: Theme.of(context).iconTheme.color),
+          child: color == null
+              ? Icon(icon, color: Theme.of(context).iconTheme.color)
+              : Icon(icon, color: color),
           fillColor: Theme.of(context).buttonColor,
           elevation: 7,
           onPressed: onPressed,

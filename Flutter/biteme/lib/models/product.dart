@@ -24,6 +24,10 @@ class Product {
     return imageUrl;
   }
 
+  String get getDescription {
+    return description;
+  }
+
   //Converts Product to Json format
   Map<String, dynamic> toJson() => {
     'id': id,

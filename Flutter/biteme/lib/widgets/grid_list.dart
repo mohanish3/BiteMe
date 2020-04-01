@@ -24,7 +24,7 @@ class GridList extends StatelessWidget {
                 crossAxisSpacing: 20),
             scrollDirection: Axis.horizontal,
             children: productList
-                .map((product) => ProductCard(product: product, user: user, searched: false, bookmarkable: false))
+                .map((product) => ProductCard(product: product, user: user, searched: false))
                 .toList()),
       )
     ]);

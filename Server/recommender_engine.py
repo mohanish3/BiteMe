@@ -104,6 +104,6 @@ class RecommenderEngine:
 			products_recommended.sort()
 			self.firebaseOps.create_element(['users', user, 'recommendations'], products_recommended)
 
-# if (__name__ == '__main__'):
-# 	recommender = RecommenderEngine(FirebaseOps())
-# 	print(recommender.recommend('o6AROAeSr9cTO0AKW2vsrxt3eCV2'))
+if (__name__ == '__main__'):
+	recommender = RecommenderEngine(FirebaseOps())
+	recommender.recommend()

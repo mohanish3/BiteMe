@@ -8,13 +8,9 @@ class ProductCard extends StatefulWidget {
   final Product product;
   final FirebaseUser user;
   final bool searched;
-  bool bookmarkable;
 
   ProductCard(
-      {@required this.product, this.user, this.searched, this.bookmarkable}) {
-    if(this.bookmarkable == null)
-      this.bookmarkable = true;
-  }
+      {@required this.product, this.user, this.searched});
 
   _ProductCardState createState() => _ProductCardState();
 }
@@ -31,7 +27,7 @@ class _ProductCardState extends State<ProductCard> {
               context,
               MaterialPageRoute(
                   builder: (context) => ProductPage(
-                      product: widget.product, searched: widget.searched)));
+                      product: widget.product, searched: widget.searched, user: widget.user,)));
         },
         child: Container(
           decoration: BoxDecoration(
@@ -65,7 +61,7 @@ class _ProductCardState extends State<ProductCard> {
                           : new List<String>.from(snapshot.data.snapshot.value);
                       isBookmarked = widget.product
                           .getBookmarkStatus(bookmarks, widget.product.getId);
-                      return widget.bookmarkable ? Container(
+                      return Container(
                           alignment: Alignment.topRight,
                           child: FlatButton(
                             padding: EdgeInsets.all(0),
@@ -95,7 +91,7 @@ class _ProductCardState extends State<ProductCard> {
                                 });
                               }
                             },
-                          )): Container();
+                          ));
                     }
                   },
                 ),
@@ -103,7 +99,7 @@ class _ProductCardState extends State<ProductCard> {
               Expanded(
                   child: Text(
                 widget.product.getTitle,
-                style: TextStyle(fontSize: 25),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.fade,
                 textAlign: TextAlign.center,
               )),
