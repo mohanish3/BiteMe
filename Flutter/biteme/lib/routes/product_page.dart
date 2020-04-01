@@ -9,9 +9,10 @@ import 'package:biteme/tabs/product/product_review.dart';
 
 class ProductPage extends StatefulWidget {
   final Product product;
+  final FirebaseUser user;
   final bool searched;
 
-  ProductPage({@required this.product, this.searched}) {
+  ProductPage({@required this.product, this.searched, this.user}) {
     FirebaseAuth.instance.currentUser().then((user) {
       DatabaseReference ref = FirebaseFunctions.getTraversedChild(
           ['users', user.uid, 'history', 'viewedProducts']);
@@ -121,7 +122,7 @@ class _ProductPageState extends State<ProductPage>
       backgroundColor: Theme.of(context).canvasColor,
       body: SafeArea(
           child: TabBarView(controller: _tabController, children: [
-        ProductDetails(product: product),
+        ProductDetails(product: product, user:widget.user),
         ProductReview(
           product: product,
           scaffoldKey: _scaffoldKey,

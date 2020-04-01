@@ -70,7 +70,8 @@ class Feed extends StatelessWidget {
                     return Center(child: CircularProgressIndicator());
                   else {
                     List<Product> _recommendationsList = snapshot.data == null ? []: snapshot.data;
-
+                    if(_recommendationsList.isEmpty)
+                      return Text('No recommendation yet!\nPlease wait...');
                     return GridList(
                       productList: _recommendationsList,
                       user: user,
