@@ -117,9 +117,10 @@ class _HomePageState extends State<HomePage>
               Tab(
                 icon: Icon(Icons.whatshot),
                 child: Text(
-                  'Hot deals',
+                  'Hot\nDeals',
                   overflow: TextOverflow.fade,
                   textScaleFactor: 0.69,
+                  textAlign: TextAlign.center,
                 ),
               ),
               Tab(
@@ -127,7 +128,7 @@ class _HomePageState extends State<HomePage>
                 child: Text(
                   'Rewards',
                   overflow: TextOverflow.fade,
-                  textScaleFactor: 0.76,
+                  textScaleFactor: 0.6,
                 ),
               ),
               Tab(
