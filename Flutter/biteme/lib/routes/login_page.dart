@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context) => HomePage(
                   user: user,
                   googleSignIn: googleSignIn,
+                 
                 )));
       } else
         setState(() {
@@ -85,7 +86,8 @@ class _LoginPageState extends State<LoginPage> {
       ref.set({
         'reviews': [],
         'credits': 0,
-        'activity': {}
+        'activity': {},
+        'badge': "No Level"
       });
     }
 

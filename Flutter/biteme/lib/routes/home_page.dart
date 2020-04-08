@@ -1,5 +1,6 @@
 import 'package:biteme/routes/login_page.dart';
 import 'package:biteme/tabs/home/profile_details.dart';
+import 'package:biteme/tabs/home/rewards_page.dart';
 import 'package:biteme/tabs/home/feed.dart';
 import 'package:biteme/tabs/home/search.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class HomePage extends StatefulWidget {
   @override
   final FirebaseUser user;
   final GoogleSignIn googleSignIn;
+  int selectedIndex;
 
   HomePage({this.user, this.googleSignIn});
 
@@ -81,7 +83,7 @@ class _HomePageState extends State<HomePage>
           user: user,
         ),
         Container(color: Colors.red),
-        Container(color: Colors.amber),
+        Rewards(user: user, signOutGoogle: signOutGoogle,),
         ProfileDetails(user: user, signOutGoogle: signOutGoogle)
       ]),
       bottomNavigationBar: Card(

@@ -61,7 +61,7 @@ class _AddReviewState extends State<AddReview> {
       return;
     }
 
-    if (enteredTitle.length > 500) {
+    if (enteredDescription.length > 500) {
       Navigator.of(context).pop();
       _displaySnackbar(context, "Description can't exceed 500 characters");
       return;
@@ -71,7 +71,7 @@ class _AddReviewState extends State<AddReview> {
     user = await FirebaseAuth.instance.currentUser();
 
     bool alreadyReviewed = false;
-    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'reviewedProducts']);
+    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'history', 'reviewedProducts']);
     ref.once().then((snapshot) {
       //Binary search to find least element greater than the key
       List<dynamic> productsReviewedList;
