@@ -4,6 +4,7 @@ import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/routes/bookmark_page.dart';
 import 'package:biteme/routes/bar_pages.dart';
 import 'package:biteme/routes/home_page.dart';
+import 'package:biteme/routes/upload_photo.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:biteme/utilities/server_functions.dart';
@@ -35,6 +36,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   String _numCredits = "Loading";
   String _numReviews = "Loading";
   String _numBooks = "Loading";
+  GoogleSignIn googleSignIn = GoogleSignIn();
 
   //static var userid = user;
   _ProfileDetailsState({this.user, this.signOutGoogle}) {
@@ -111,9 +113,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   Widget _buildProfileImage() {
     return GestureDetector(
-      onTap: () {
-        print("hellosamurai");
-      },
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ImageCapture(),
+            )),
       child: Center(
         child: Container(
           width: 140.0,
@@ -228,7 +230,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             child: _buildStatItem("Credits", _getCredits()),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => CreditsHelpPage(),
+                builder: (context) => HomePage(
+                  user: user,
+                  googleSignIn: googleSignIn,
+                  selectedIndex: 3,
+                ),
               ),
             ),
           ),

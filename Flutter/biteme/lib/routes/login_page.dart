@@ -37,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
             builder: (context) => HomePage(
                   user: user,
                   googleSignIn: googleSignIn,
+                  selectedIndex: 0,
                  
                 )));
       } else

@@ -139,7 +139,7 @@ void myScroll() async {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: _showAppbar ? new AppBar(
+        appBar: new AppBar(
           title: new Text(
             "Rewards",
             style: TextStyle(
@@ -152,10 +152,7 @@ void myScroll() async {
           toolbarOpacity: 0.0,
           bottomOpacity: 0.0,
           elevation: 0,
-        ) : PreferredSize(
-      child: Container(),
-      preferredSize: Size(0.0, 0.0),
-        ),
+        ), 
         body: new Container(
             child: rewardTemplate.length == 0
                 ? new Text("No Rewards Available, sorry.")

@@ -15,10 +15,10 @@ class HomePage extends StatefulWidget {
   final GoogleSignIn googleSignIn;
   int selectedIndex;
 
-  HomePage({this.user, this.googleSignIn});
+  HomePage({this.user, this.googleSignIn, this.selectedIndex});
 
   _HomePageState createState() =>
-      _HomePageState(user: user, googleSignIn: googleSignIn);
+      _HomePageState(user: user, googleSignIn: googleSignIn, selectedIndex: selectedIndex);
 }
 
 class _HomePageState extends State<HomePage>
@@ -29,10 +29,10 @@ class _HomePageState extends State<HomePage>
 
   TabController _tabController;
 
-  int _selectedIndex;
+  int selectedIndex;
 
-  _HomePageState({this.user, this.googleSignIn}) {
-    _selectedIndex = 0;
+  _HomePageState({this.user, this.googleSignIn,this.selectedIndex}) {
+    //_tabController.index = selectedIndex;
   }
 
   void signOutGoogle() async {
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _tabController = new TabController(length: 5, vsync: this);
+    _tabController = new TabController(length: 5, vsync: this, initialIndex: selectedIndex,);
     _tabController.addListener(_setSelectedIndex);
   }
 
@@ -67,7 +67,8 @@ class _HomePageState extends State<HomePage>
 
   void _setSelectedIndex() {
     setState(() {
-      _selectedIndex = _tabController.index;
+      selectedIndex = _tabController.index;
+      print (selectedIndex);
     });
   }
 
