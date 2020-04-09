@@ -12,34 +12,36 @@ import 'package:biteme/widgets/reward_template.dart';
 class RewardsChild extends StatefulWidget {
   FirebaseUser user;
   var signOutGoogle;
+  String path;
 
-  RewardsChild({this.user, this.signOutGoogle});
+  RewardsChild({this.user, this.signOutGoogle, this.path});
 
   @override
   _RewardsChildState createState() =>
-      _RewardsChildState(user: user, signOutGoogle: signOutGoogle);
+      _RewardsChildState(user: user, signOutGoogle: signOutGoogle, path: path);
 }
 
 class _RewardsChildState extends State<RewardsChild> {
   final FirebaseUser user;
   final Function signOutGoogle;
+  String path;
   bool _showAppbar = true; //this is to show app bar
-ScrollController _scrollBottomBarController = new ScrollController(); // set controller on scrolling
-bool isScrollingDown = false;
-bool _show = true;
-double bottomBarHeight = 75; // set bottom bar height
-double _bottomBarOffset = 0;
-List<RewardTemplate> rewardTemplate = [];
+  ScrollController _scrollBottomBarController =
+      new ScrollController(); // set controller on scrolling
+  bool isScrollingDown = false;
+  bool _show = true;
+  double bottomBarHeight = 75; // set bottom bar height
+  double _bottomBarOffset = 0;
+  List<RewardTemplate> rewardTemplate = [];
 
-  _RewardsChildState({this.user, this.signOutGoogle});
-
+  _RewardsChildState({this.user, this.signOutGoogle, this.path});
 
   @override
   void initState() {
     super.initState();
-myScroll();
-    DatabaseReference ref =
-        FirebaseDatabase.instance.reference().child("rewards/tags");
+    myScroll();
+    var ref =
+        FirebaseDatabase.instance.reference().child("rewards/" + path).orderByChild('credits');
     ref.once().then((snapshot) {
       var keys = snapshot.value.keys;
       var data = snapshot.value;
@@ -51,6 +53,7 @@ myScroll();
             data[individualKeys]['name'], data[individualKeys]['credits']);
 
         rewardTemplate.add(rewTemp);
+        print (individualKeys);
       }
 
       setState(() {
@@ -60,101 +63,111 @@ myScroll();
   }
 
   @override
-void dispose() { 
-  _scrollBottomBarController.removeListener(() {});
-  super.dispose();
-}
+  void dispose() {
+    _scrollBottomBarController.removeListener(() {});
+    super.dispose();
+  }
 
-void showBottomBar() {
-  setState(() {
-    _show = true;
-  });
-}
+  void showBottomBar() {
+    setState(() {
+      _show = true;
+    });
+  }
 
-void hideBottomBar() {
-  setState(() {
-    _show = false;
-  });
-}
+  void hideBottomBar() {
+    setState(() {
+      _show = false;
+    });
+  }
 
-void myScroll() async {
-  _scrollBottomBarController.addListener(() {
-    if (_scrollBottomBarController.position.userScrollDirection ==
-        ScrollDirection.reverse) {
-      if (!isScrollingDown) {
-        isScrollingDown = true;
-        _showAppbar = false;
-        hideBottomBar();
+  void myScroll() async {
+    _scrollBottomBarController.addListener(() {
+      if (_scrollBottomBarController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        if (!isScrollingDown) {
+          isScrollingDown = true;
+          _showAppbar = false;
+          hideBottomBar();
+        }
       }
-    }
-    if (_scrollBottomBarController.position.userScrollDirection ==
-        ScrollDirection.forward) {
-      if (isScrollingDown) {
-        isScrollingDown = false;
-        _showAppbar = true;
-        showBottomBar();
+      if (_scrollBottomBarController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        if (isScrollingDown) {
+          isScrollingDown = false;
+          _showAppbar = true;
+          showBottomBar();
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   Widget rewUI(String name, int credits) {
-    return new Card(
+    return GestureDetector(
+      onTap: () => print("Detected"),
+      child: new Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
         elevation: 10.0,
-        margin: EdgeInsets.all(10.0),
+        margin: EdgeInsets.all(9.0),
         child: new Container(
-            padding: new EdgeInsets.all(15.0),
-            child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  new Text(
-                    name,
-                    style: TextStyle(
-                      fontSize: 25,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'OpenSans',
-                    ),
-                    textAlign: TextAlign.center,
+          padding: new EdgeInsets.all(15.0),
+          child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                new Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'OpenSans',
                   ),
-                  new Text(
-                    credits.toString() + " credits",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'OpenSans',
-                      fontWeight: FontWeight.w300,
-                      fontStyle: FontStyle.italic,
-                    ),
-                    textAlign: TextAlign.center,
+                  textAlign: TextAlign.center,
+                ),
+                new Text(
+                  credits.toString() + " credits",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: 'OpenSans',
+                    fontWeight: FontWeight.w300,
+                    fontStyle: FontStyle.italic,
                   ),
-                ])));
+                  textAlign: TextAlign.center,
+                ),
+              ]),
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        appBar: new AppBar(
-          automaticallyImplyLeading: false, 
-          title: new Text(
-            "Rewards",
-            style: TextStyle(
-                fontSize: 35,
-                fontFamily: 'OpenSans',
-                fontWeight: FontWeight.w400,
-                color: Colors.black),
-          ),
-          backgroundColor: Theme.of(context).canvasColor,
-          toolbarOpacity: 0.0,
-          bottomOpacity: 0.0,
-          elevation: 0,
-        ), 
-        body: new Container(
-            child: rewardTemplate.length == 0
-                ? new Text("No Rewards Available, sorry.")
-                : new ListView.builder(
-                    itemCount: rewardTemplate.length,
-                    itemBuilder: (_, index) {
-                      return rewUI(rewardTemplate[index].name,
-                          rewardTemplate[index].credits);
-                    })));
+      appBar: new AppBar(
+        automaticallyImplyLeading: false,
+        title: new Text(
+          path,
+          style: TextStyle(
+              fontSize: 35,
+              fontFamily: 'OpenSans',
+              fontWeight: FontWeight.w400,
+              color: Colors.black),
+        ),
+        backgroundColor: Theme.of(context).canvasColor,
+        toolbarOpacity: 0.0,
+        bottomOpacity: 0.0,
+        elevation: 0,
+      ),
+      body: new Container(
+        child: rewardTemplate.length == 0
+            ? new Text("No Rewards Available, sorry.")
+            : new ListView.builder(
+                itemCount: rewardTemplate.length,
+                itemBuilder: (_, index) {
+                  return rewUI(rewardTemplate[index].name,
+                      rewardTemplate[index].credits);
+                }),
+      ),
+    );
   }
 }
