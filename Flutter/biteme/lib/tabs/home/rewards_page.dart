@@ -140,6 +140,7 @@ void myScroll() async {
   Widget build(BuildContext context) {
     return new Scaffold(
         appBar: new AppBar(
+          automaticallyImplyLeading: false, 
           title: new Text(
             "Rewards",
             style: TextStyle(

@@ -88,7 +88,9 @@ class _LoginPageState extends State<LoginPage> {
         'reviews': [],
         'credits': 0,
         'activity': {},
-        'badge': "No Level"
+        'badge': "No Badge Yet!",
+        'name' : user.displayName,
+        'photoUrl' : user.photoUrl
       });
     }
 
@@ -129,6 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                                   builder: (context) => HomePage(
                                         user: user,
                                         googleSignIn: googleSignIn,
+                                        selectedIndex: 0,
                                       )));
                         });
                       },

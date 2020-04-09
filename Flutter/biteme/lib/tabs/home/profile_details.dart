@@ -27,23 +27,32 @@ class ProfileDetails extends StatefulWidget {
 }
 
 class _ProfileDetailsState extends State<ProfileDetails> {
-  final FirebaseUser user;
+  FirebaseUser user;
   final Function signOutGoogle;
 
-  String _status = "Loading";
+  String _status = "Loading...";
   final String _bio =
-      "\"Hi, I am a Freelance developer working for hourly basis. If you wants to contact me to build your product leave a message.\"";
-  String _numCredits = "Loading";
-  String _numReviews = "Loading";
-  String _numBooks = "Loading";
+      "To modify any of your details, please tap on the respective field.\nHave a great time using BiteME!";
+  String _numCredits = "0";
+  String _numReviews = "0";
+  String _numBooks = "0";
+  String fullName = "Loading...";
+  String imageUrl = "https://images.unsplash.com/photo-1555445091-5a8b655e8a4a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80";
   GoogleSignIn googleSignIn = GoogleSignIn();
+  var titleController = TextEditingController();
 
   //static var userid = user;
   _ProfileDetailsState({this.user, this.signOutGoogle}) {
     //_getRevs();
     //_getBookmarks();
     //_getCredits();
+    //.reloadUser();
   }
+
+  /*void reloadUser() async {
+    user.reload();
+    user = await FirebaseAuth.instance.currentUser();
+  }*/
 
   String _getReviews() {
     //DataSnapshot snapshot1;
@@ -52,7 +61,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         .child("users/" + user.uid + "/history/reviewedProducts");
     ref.once().then((snapshot) {
       setState(() {
-        _numReviews = snapshot.value.length.toString();
+        _numReviews = snapshot.value.length.toString() ?? "0";
       });
     });
 
@@ -66,7 +75,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         .child("users/" + user.uid + "/history/bookmarks");
     ref.once().then((snapshot) {
       setState(() {
-        _numBooks = snapshot.value.length.toString();
+        _numBooks = snapshot.value.length.toString() ?? "0";
       });
     });
 
@@ -99,12 +108,40 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return _status;
   }
 
+  String _getProfilePhoto() {
+    //String imageUrl;
+    DatabaseReference ref =
+        FirebaseDatabase.instance.reference().child("users/" + user.uid);
+    ref.once().then((snapshot) {
+      setState(() {
+        imageUrl = snapshot.value['photoUrl'].toString();
+      });
+    });
+    //print (imageUrl + "YAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    if (imageUrl == null) imageUrl = "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=jpg&quality=90&v=1530129081";
+    return imageUrl;
+    //"https://lh3.googleusercontent.com/a-/AOh14GhxAbSxZwRqfgVCzMaFQ6w-820QZp9ecultK2Gt=s96-c"
+  }
+
+   String _getName() {
+    
+    DatabaseReference ref =
+        FirebaseDatabase.instance.reference().child("users/" + user.uid);
+    ref.once().then((snapshot) {
+      setState(() {
+        fullName = snapshot.value['name'];
+      });
+    });
+
+    return fullName;
+  }
+
   Widget _buildCoverImage(Size screenSize) {
     return Container(
       height: screenSize.height / 2.6,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/images/BITS_Logo.png'),
+          image: AssetImage('assets/images/product_placeholder.png'),
           fit: BoxFit.cover,
         ),
       ),
@@ -121,12 +158,11 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           width: 140.0,
           height: 140.0,
           child: ClipOval(
-            child: FadeInImage.assetNetwork(
+              child: FadeInImage.assetNetwork(
               fadeInCurve: Curves.fastOutSlowIn,
               placeholder: 'assets/images/product_placeholder.png',
-              image: user.photoUrl,
-              fit: BoxFit.fill,
-            ),
+              image: _getProfilePhoto() ?? 'cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=webp&v=1530129081',
+              fit: BoxFit.fill,),
           ),
         ),
       ),
@@ -135,22 +171,39 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   Widget _buildFullName() {
     TextStyle _nameTextStyle = TextStyle(
-      fontFamily: 'Roboto',
+      fontFamily: 'OpenSans',
       color: Colors.black,
       fontSize: 28.0,
       fontWeight: FontWeight.w700,
     );
 
+    bool textOrField = true;
+
     return GestureDetector(
       onTap: () {
-        print("hellosamurai");
+        setState(() {
+          textOrField? textOrField = false : textOrField = true;
+        });
+        
+        print ("Hello Samurai" + textOrField.toString());
       },
-      child: Text(
-        user.displayName,
+      child: textOrField? Text(
+        _getName() ?? "Loading...",
         style: _nameTextStyle,
-      ),
+      )
+      : Text ("WORKS"),/*TextField(
+              decoration: InputDecoration(labelText: 'Title'),
+              controller: titleController,
+              onSubmitted: (_) => addData,
+            ),*/
     );
   }
+
+  /*void addData() async {
+    final String enteredTitle = titleController.text;
+    
+    
+  } */
 
   Widget _buildStatus(BuildContext context) {
     return Container(
@@ -162,7 +215,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       child: Text(
         _getStatus(),
         style: TextStyle(
-          fontFamily: 'Spectral',
+          fontFamily: 'OpenSans',
           color: Colors.black,
           fontSize: 20.0,
           fontWeight: FontWeight.w300,
@@ -345,20 +398,27 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   @override
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
+    //print (user.photoUrl + ".....................");
+    //user.reload();
     return Scaffold(
       body: Stack(
         children: <Widget>[
-          _buildCoverImage(screenSize),
+          //_buildCoverImage(screenSize),
+         
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  SizedBox(height: screenSize.height / 10.0),
+                  SizedBox(height: screenSize.height / 13),
                   _buildProfileImage(),
+                  SizedBox(height: 15.0,),
                   _buildFullName(),
                   _buildStatus(context),
+                  SizedBox(height: 5.0,),
                   _buildStatContainer(),
+                  SizedBox(height: 5.0,),
                   _buildBio(context),
+                  SizedBox(height: 5.0,),
                   _buildSeparator(screenSize),
                   SizedBox(height: 10.0),
                   SizedBox(height: 8.0),

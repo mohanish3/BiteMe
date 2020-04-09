@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _tabController = new TabController(length: 5, vsync: this, initialIndex: selectedIndex,);
+    _tabController = new TabController(length: 5, vsync: this, initialIndex: selectedIndex ?? 0,);
     _tabController.addListener(_setSelectedIndex);
   }
 

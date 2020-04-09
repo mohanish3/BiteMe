@@ -7,7 +7,6 @@ import 'package:biteme/routes/home_page.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:biteme/utilities/server_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -16,6 +15,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:biteme/utilities/firebase_functions.dart';
 
 class ImageCapture extends StatefulWidget {
@@ -114,8 +115,9 @@ class ImageCaptureState extends State<ImageCapture> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
+        automaticallyImplyLeading: false,
         title: new Text(
-          _imageFile == null ?"Edit Profile" : "Edit Image",
+          _imageFile == null ? "Upload an Image" : "Edit Image",
           style: TextStyle(
               fontSize: 35,
               fontFamily: 'OpenSans',
@@ -127,56 +129,57 @@ class ImageCaptureState extends State<ImageCapture> {
         bottomOpacity: 0.0,
         elevation: 0,
       ),
-      bottomNavigationBar: _imageFile == null ? Padding(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: InkWell(
-                onTap: () => _pickImage(ImageSource.camera),
-                child: Container(
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                    color: Color(0xFF404A5C),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "CAMERA",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+      bottomNavigationBar: _imageFile == null
+          ? Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _pickImage(ImageSource.camera),
+                      child: Container(
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                          color: Color(0xFF404A5C),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "CAMERA",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
-            ),
-            SizedBox(width: 10.0),
-            Expanded(
-              child: InkWell(
-                onTap: () => _pickImage(ImageSource.gallery),
-                child: Container(
-                  height: 40.0,
-                  decoration: BoxDecoration(
-                    border: Border.all(),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text(
-                        "GALLERY",
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                  SizedBox(width: 10.0),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _pickImage(ImageSource.gallery),
+                      child: Container(
+                        height: 40.0,
+                        decoration: BoxDecoration(
+                          border: Border.all(),
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: Text(
+                              "GALLERY",
+                              style: TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
-        ),
-      )
-      : Padding(
+            )
+          : Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Row(
                 children: <Widget>[
@@ -187,13 +190,11 @@ class ImageCaptureState extends State<ImageCapture> {
                         height: 40.0,
                         decoration: BoxDecoration(
                           border: Border.all(),
-                          color: Color(0xFF404A5C),
                         ),
                         child: Center(
                           child: Text(
                             "CROP",
                             style: TextStyle(
-                              color: Colors.white,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -211,20 +212,23 @@ class ImageCaptureState extends State<ImageCapture> {
                         height: 40.0,
                         decoration: BoxDecoration(
                           border: Border.all(),
+                          color: Color(0xFF404A5C),
                         ),
                         child: Center(
                           child: Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Text(
                               "RESTART",
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                   SizedBox(width: 2.0),
+                  SizedBox(width: 2.0),
                   Expanded(
                     child: InkWell(
                       //onTap: () => Navigator.of(context).push(MaterialPageRoute(
@@ -250,9 +254,8 @@ class ImageCaptureState extends State<ImageCapture> {
       body: ListView(
         children: <Widget>[
           if (_imageFile != null) ...[
-            
             Image.file(_imageFile),
-            Uploader(file: _imageFile),
+            //Uploader(file: _imageFile),
           ]
         ],
       ),
@@ -275,12 +278,84 @@ class UploaderState extends State<Uploader> {
 
   StorageUploadTask _uploadTask;
 
-  void _startUpload() {
-    String filePath = 'images/${DateTime.now()}.png';
+  /*FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseUser user = auth.currentUser().then((FirebaseUser user){
+    final userid = user.uid;
+  }); */
+
+  /*
+  FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+        .setDisplayName("Jane Q. User")
+        .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+        .build();
+
+user.updateProfile(profileUpdates)
+        .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d(TAG, "User profile updated.");
+                }
+            }
+        });
+
+  */
+
+  //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+  void _startUpload() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser user = await auth.currentUser();
+
+    String filePath = 'images/' + user.uid + '.png';
 
     setState(() {
       _uploadTask = _storage.ref().child(filePath).putFile(widget.file);
     });
+  }
+
+  void updateUserData() async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+    
+    final ref = FirebaseStorage.instance.ref().child("images").child(user.uid + '.png');
+    var url = await ref.getDownloadURL() as String;
+
+     DatabaseReference ref2 = FirebaseFunctions.getTraversedChild(['users', user.uid]);
+      ref2.update({'photoUrl' : url});
+      
+      //print ("EXECUTED>>>>>>>>>>>>>>>");
+  }
+
+  Widget _uploadButton(StorageUploadTask _uploadTask) {
+    if (_uploadTask.isCanceled)
+      return Text(
+        "CANCELLED!",
+        style: TextStyle(fontWeight: FontWeight.w600),
+      );
+    if (_uploadTask.isSuccessful) {
+      updateUserData();
+
+      return Text(
+        "COMPLETE!",
+        style: TextStyle(fontWeight: FontWeight.w600),
+      );
+    }
+
+    if (_uploadTask.isInProgress)
+      return FlatButton(
+        child: CircularProgressIndicator(
+          strokeWidth: 1.5,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),
+        ),
+        onPressed: _uploadTask.cancel,
+      );
+
+      return Text(
+        "ERROR!",
+        style: TextStyle(fontWeight: FontWeight.w600),
+      );
   }
 
   @override
@@ -294,25 +369,8 @@ class UploaderState extends State<Uploader> {
           double progressPercent =
               event != null ? event.bytesTransferred / event.totalByteCount : 0;
 
-          return Column(
-            children: <Widget>[
-              if (_uploadTask.isComplete) Text("COMPLETE!"),
-              if (_uploadTask.isPaused)
-                FlatButton(
-                  child: Icon(Icons.play_arrow),
-                  onPressed: _uploadTask.resume,
-                ),
-              if (_uploadTask.isInProgress)
-              FlatButton(
-                  child: CircularProgressIndicator(strokeWidth: 2.0, valueColor: new AlwaysStoppedAnimation<Color>(Colors.black),),
-                  onPressed: _uploadTask.pause,
-                ),
-                
-              //LinearProgressIndicator(
-              //  value: progressPercent,
-             // ),
-              //Text("${(progressPercent * 100).toStringAsFixed(2)} %"),
-            ],
+          return Center(
+            child: _uploadButton(_uploadTask),
           );
         },
       );
