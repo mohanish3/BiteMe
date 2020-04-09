@@ -7,14 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:biteme/utilities/firebase_functions.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:biteme/utilities/viewport_offset.dart';
-import 'package:biteme/widgets/custom_app_bar.dart';
-
-class RewardTemplate {
-  String name;
-  int credits;
-
-  RewardTemplate(this.name, this.credits);
-}
+import 'package:biteme/widgets/reward_template.dart';
 
 class Rewards extends StatefulWidget {
   FirebaseUser user;
