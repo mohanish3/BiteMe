@@ -9,18 +9,18 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:biteme/utilities/viewport_offset.dart';
 import 'package:biteme/widgets/reward_template.dart';
 
-class Rewards extends StatefulWidget {
+class RewardsChild extends StatefulWidget {
   FirebaseUser user;
   var signOutGoogle;
 
-  Rewards({this.user, this.signOutGoogle});
+  RewardsChild({this.user, this.signOutGoogle});
 
   @override
-  _RewardsState createState() =>
-      _RewardsState(user: user, signOutGoogle: signOutGoogle);
+  _RewardsChildState createState() =>
+      _RewardsChildState(user: user, signOutGoogle: signOutGoogle);
 }
 
-class _RewardsState extends State<Rewards> {
+class _RewardsChildState extends State<RewardsChild> {
   final FirebaseUser user;
   final Function signOutGoogle;
   bool _showAppbar = true; //this is to show app bar
@@ -31,7 +31,7 @@ double bottomBarHeight = 75; // set bottom bar height
 double _bottomBarOffset = 0;
 List<RewardTemplate> rewardTemplate = [];
 
-  _RewardsState({this.user, this.signOutGoogle});
+  _RewardsChildState({this.user, this.signOutGoogle});
 
 
   @override

@@ -4,6 +4,7 @@ import 'package:biteme/tabs/home/rewards_page.dart';
 import 'package:biteme/tabs/home/feed.dart';
 import 'package:biteme/tabs/home/search.dart';
 import 'package:flutter/material.dart';
+import 'package:biteme/tabs/home/rewards_main.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
