@@ -1,6 +1,6 @@
 import 'package:biteme/routes/login_page.dart';
 import 'package:biteme/tabs/home/profile_details.dart';
-import 'package:biteme/tabs/home/rewards_page.dart';
+import 'package:biteme/tabs/home/rewards_child.dart';
 import 'package:biteme/tabs/home/feed.dart';
 import 'package:biteme/tabs/home/search.dart';
 import 'package:flutter/material.dart';

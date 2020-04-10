@@ -1,4 +1,4 @@
-import 'package:biteme/tabs/home/rewards_page.dart';
+import 'package:biteme/tabs/home/rewards_child.dart';
 import 'package:biteme/widgets/custom_app_bar.dart';
 import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/routes/bookmark_page.dart';

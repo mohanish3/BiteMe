@@ -8,7 +8,7 @@ import 'package:biteme/utilities/firebase_functions.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:biteme/utilities/viewport_offset.dart';
 import 'package:biteme/widgets/reward_template.dart';
-import 'package:biteme/tabs/home/rewards_page.dart';
+import 'package:biteme/tabs/home/rewards_child.dart';
 
 class Rewards extends StatefulWidget {
   FirebaseUser user;
@@ -99,7 +99,8 @@ class _RewardsState extends State<Rewards> {
   Widget rewUI2(String name) {
     return GestureDetector(
       onTap: () => Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => RewardsChild(user: user, signOutGoogle: signOutGoogle, path: name),
+        builder: (context) =>
+            RewardsChild(user: user, signOutGoogle: signOutGoogle, path: name),
       )),
       child: new Card(
         shape: RoundedRectangleBorder(
@@ -147,7 +148,13 @@ class _RewardsState extends State<Rewards> {
         ),
         body: new Container(
             child: rewardTemplate.length == 0
-                ? new Text("No Rewards Available, sorry.")
+                ? new Center(
+                    child: CircularProgressIndicator(
+                      strokeWidth: 1.5,
+                      valueColor:
+                          new AlwaysStoppedAnimation<Color>(Colors.black),
+                    ),
+                  )
                 : new ListView.builder(
                     itemCount: rewardTemplate.length,
                     itemBuilder: (_, index) {
