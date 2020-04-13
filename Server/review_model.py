@@ -5,21 +5,32 @@ import string
 from random import randint
 import csv
 
-from keras import Sequential
-from keras.models import Model
-from tensorflow.keras.models import load_model
-from keras.layers import Dense, Input, Dropout, LSTM, Activation
-from keras.layers.embeddings import Embedding
+#RNN imports
+#from keras import Sequential
+#from keras.models import Model
+#from tensorflow.keras.models import load_model
+#from keras.layers import Dense, Input, Dropout, LSTM, Activation
+#from keras.layers.embeddings import Embedding
+#from keras.optimizers import Adam
+
 from keras.preprocessing import sequence
 from keras.preprocessing.text import Tokenizer, text_to_word_sequence
 from keras.preprocessing.sequence import pad_sequences
-from keras.initializers import glorot_uniform
 from keras.utils import to_categorical
 
+#RandomForest imports
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+#nltk imports
+import nltk
 from nltk.corpus import stopwords
+nltk.download('stopwords')
 
 from nltk.stem import WordNetLemmatizer 
 from nltk.tokenize import word_tokenize 
+
+import pickle as pkl
 
 #Fix for reviews threading error
 import keras.backend.tensorflow_backend as tb
@@ -33,62 +44,69 @@ class ReviewModel:
 	def __init__(self):
 		self.init_model()
 		#self.train_model()
-		self.load_modelh5()
+		self.load_model_file()
 		#print(self.test_review('This is something I\'ve been using for the last year. A better product simply can\'t be found. Thank you Healthkart. Looking for such better products in the future. Healthy and delicious product that helps a lot. Looking forward for more products with such quality. The taste and health factor of the nutrients just makes it even better. Would buy again.'))
 		#Gets rating 8/10 after training with 10000 samples
 
 	def get_review_rating(self, review):
+		#predict value for one sentence
 		y = self.model.predict(pad_sequences([next(self.texts_to_sequences([review]))], maxlen=200))
-		return (int(np.argmax(y[0])) + 1) * randint(1, 10)
+		return (int(np.argmax(y[0])) * 6 + randint(1, 4)) * randint(1, 10)
 
-	def load_modelh5(self):
+	def load_model_file(self):
 		print("Loading model...")
-		self.model = load_model('model.h5')
+
+		#load RandomForest model
+		self.model = pkl.load(open('model.pkl', 'rb'))
+		
+		#load RNN model
+		#self.model = load_model('model.h5')
 
 	def train_model(self):
-		print('Loading data...')
+		print('Loading training data...')
 
-		# f = open('train_data.txt')
-		# train_data = []
-		# TRAIN_SAMPLES = 10000
-		# sample_count = 0
-		# for line in f:
-		# 	if(sample_count == TRAIN_SAMPLES):
-		# 		break
-		# 	X = line[11:]
-		# 	label = int(line[9])
-		# 	y = randint((label-1) * 5, (label * 5) - 1)
-		# 	train_data.append([X, y])
-		# 	sample_count += 1
-		# f.close()
+		#load data from file into an array
 		train_data = []
 		with open('train_data.txt') as f:
 			reader = csv.reader(f, delimiter='\t')
 			next(reader)
 			for line in reader:
 				if(line[1] == '__label1__'):
-					train_data.append([line[8], randint(0, 4)])
+					train_data.append([line[8], 0])
 				else:
-					train_data.append([line[8], randint(5, 9)])
+					train_data.append([line[8], 1])
 
+		#load data into a dataframe
 		train_df = pd.DataFrame(columns=["text", "quality"], data=train_data)
+		
+		#clean data
 		clean_df = self.clean_data_dl(train_df, 'text')
-		print(clean_df.head())
-
+		
 		#generate sequence for training
 		sequence_gen = self.texts_to_sequences(clean_df['text'].values)
 		X = []
 		for x in sequence_gen:
 			X.append(x)
+		
+		#pad sequences upto 200 words
 		X = pad_sequences(X, maxlen=200)
 
 		#generate output values
-		y = to_categorical(np.array(clean_df['quality'].values), num_classes=10)
+		y = to_categorical(np.array(clean_df['quality'].values), num_classes=2)
 
-		self.model.fit(X, y, batch_size=64, epochs = 3)
-		self.model.save('model.h5')
+		print("Training model...")
+		#train RandomForest model
+		self.model.fit(X, y)
+		pkl.dump(self.model, open('model.pkl', 'wb'))
+
+		#train RNN Model
+		#self.model.fit(X, y, batch_size=128, epochs = 3)
+		#self.model.save('model.h5')
 
 	def init_model(self):
+		
+		self.model = RandomForestClassifier(n_estimators=140)
+		
 		embeddings_index = {}
 		dims = 200
 		glove_data = 'glove.6B.'+str(dims)+'d.txt'
@@ -104,6 +122,7 @@ class ReviewModel:
 
 		self.word_index = {w: i for i, w in enumerate(embeddings_index.keys(), 1)}
 		
+		'''
 		#create embedding matrix
 		embedding_matrix = np.zeros((len(self.word_index) + 1, dims))
 		for word, i in self.word_index.items():
@@ -120,13 +139,11 @@ class ReviewModel:
 		print("Initializing model...")
 		self.model = Sequential()
 		self.model.add(embedding_layer)
-		self.model.add(Dropout(0.3))
-		self.model.add(LSTM(256, return_sequences=True, dropout=0.3, recurrent_dropout=0.2))
-		self.model.add(LSTM(256, dropout=0.3, recurrent_dropout=0.2))
-		self.model.add(Dense(10, activation='softmax'))
+		self.model.add(LSTM(64, return_sequences=False, dropout=0.25))
+		self.model.add(Dense(2, activation='softmax'))
 
-		self.model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-		
+		self.model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=0.003, decay=0.0001), metrics=['accuracy'])
+		'''
 
 	def texts_to_sequences(self, texts):
 	    for text in texts:
@@ -161,8 +178,8 @@ class ReviewModel:
 	    hd_df[col_name] = hd_df[col_name].apply(lambda x: " ".join(y for y in x.split() if len(y) > 1))
 
 	    # Removing stopwords
-	    #sw = stopwords.words('english')
-	    #hd_df[col_name] = hd_df[col_name].apply(lambda x: " ".join(y for y in x.split() if y not in sw))
+	    sw = stopwords.words('english')
+	    hd_df[col_name] = hd_df[col_name].apply(lambda x: " ".join(y for y in x.split() if y not in sw))
 
 	    # Removing digits
 	    hd_df[col_name] = hd_df[col_name].apply(lambda x: " ".join(y for y in x.split() if not y.isdigit()))

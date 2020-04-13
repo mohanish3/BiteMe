@@ -2,7 +2,7 @@ from flask import Flask, request, redirect, url_for
 from flask_restful import Resource, Api
 from flask_jsonpify import jsonify
 from firebase_ops import FirebaseOps
-#from review_model import ReviewModel
+from review_model import ReviewModel
 from recommender_engine import RecommenderEngine
 from search_ops import SearchOps
 from apscheduler.triggers.combining import OrTrigger
@@ -51,6 +51,6 @@ if __name__ == '__main__':
 	scheduler.add_job(recommender.recommend, trigger) #Get recommendations every 3 hours
 	scheduler.start()
 
-	#review_model = ReviewModel()
+	review_model = ReviewModel()
 	
 	app.run(host = '0.0.0.0', debug=False, port=3000)

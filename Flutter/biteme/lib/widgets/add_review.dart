@@ -71,7 +71,7 @@ class _AddReviewState extends State<AddReview> {
     user = await FirebaseAuth.instance.currentUser();
 
     bool alreadyReviewed = false;
-    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'reviewedProducts']);
+    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'history', 'reviewedProducts']);
     ref.once().then((snapshot) {
       //Binary search to find least element greater than the key
       List<dynamic> productsReviewedList;
