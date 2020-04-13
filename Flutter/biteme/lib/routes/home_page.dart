@@ -1,8 +1,10 @@
 import 'package:biteme/routes/login_page.dart';
 import 'package:biteme/tabs/home/profile_details.dart';
+import 'package:biteme/tabs/home/rewards_child.dart';
 import 'package:biteme/tabs/home/feed.dart';
 import 'package:biteme/tabs/home/search.dart';
 import 'package:flutter/material.dart';
+import 'package:biteme/tabs/home/rewards_main.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,11 +14,12 @@ class HomePage extends StatefulWidget {
   @override
   final FirebaseUser user;
   final GoogleSignIn googleSignIn;
+  int selectedIndex;
 
-  HomePage({this.user, this.googleSignIn});
+  HomePage({this.user, this.googleSignIn, this.selectedIndex});
 
   _HomePageState createState() =>
-      _HomePageState(user: user, googleSignIn: googleSignIn);
+      _HomePageState(user: user, googleSignIn: googleSignIn, selectedIndex: selectedIndex);
 }
 
 class _HomePageState extends State<HomePage>
@@ -27,10 +30,10 @@ class _HomePageState extends State<HomePage>
 
   TabController _tabController;
 
-  int _selectedIndex;
+  int selectedIndex;
 
-  _HomePageState({this.user, this.googleSignIn}) {
-    _selectedIndex = 0;
+  _HomePageState({this.user, this.googleSignIn,this.selectedIndex}) {
+    //_tabController.index = selectedIndex;
   }
 
   void signOutGoogle() async {
@@ -45,7 +48,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _tabController = new TabController(length: 5, vsync: this);
+    _tabController = new TabController(length: 5, vsync: this, initialIndex: selectedIndex ?? 0,);
     _tabController.addListener(_setSelectedIndex);
   }
 
@@ -65,7 +68,8 @@ class _HomePageState extends State<HomePage>
 
   void _setSelectedIndex() {
     setState(() {
-      _selectedIndex = _tabController.index;
+      selectedIndex = _tabController.index;
+      print (selectedIndex);
     });
   }
 
@@ -81,7 +85,7 @@ class _HomePageState extends State<HomePage>
           user: user,
         ),
         Container(color: Colors.red),
-        Container(color: Colors.amber),
+        Rewards(user: user, signOutGoogle: signOutGoogle,),
         ProfileDetails(user: user, signOutGoogle: signOutGoogle)
       ]),
       bottomNavigationBar: Card(
@@ -115,9 +119,10 @@ class _HomePageState extends State<HomePage>
               Tab(
                 icon: Icon(Icons.whatshot),
                 child: Text(
-                  'Hot deals',
+                  'Hot\nDeals',
                   overflow: TextOverflow.fade,
                   textScaleFactor: 0.69,
+                  textAlign: TextAlign.center,
                 ),
               ),
               Tab(
@@ -125,7 +130,7 @@ class _HomePageState extends State<HomePage>
                 child: Text(
                   'Rewards',
                   overflow: TextOverflow.fade,
-                  textScaleFactor: 0.76,
+                  textScaleFactor: 0.6,
                 ),
               ),
               Tab(
