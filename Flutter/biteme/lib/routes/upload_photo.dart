@@ -1,13 +1,4 @@
-import 'package:biteme/tabs/home/rewards_child.dart';
-import 'package:biteme/widgets/custom_app_bar.dart';
-import 'package:biteme/widgets/custom_icon_button.dart';
-import 'package:biteme/routes/bookmark_page.dart';
-import 'package:biteme/routes/bar_pages.dart';
-import 'package:biteme/routes/home_page.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:biteme/utilities/server_functions.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:biteme/utilities/firebase_functions.dart';
 
@@ -48,67 +38,6 @@ class ImageCaptureState extends State<ImageCapture> {
     setState(() {
       _imageFile = cropped ?? _imageFile;
     });
-  }
-
-  void _clear() {
-    setState(() {
-      _imageFile = null;
-    });
-  }
-
-  Widget _buildButtons(String x, String y, var a, var b) {
-    if (x == null) x = "NULL";
-    if (y == null) y = "NULL";
-
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: InkWell(
-              onTap: () => a,
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                  color: Color(0xFF404A5C),
-                ),
-                child: Center(
-                  child: Text(
-                    x,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SizedBox(width: 10.0),
-          Expanded(
-            child: InkWell(
-              onTap: () => b,
-              child: Container(
-                height: 40.0,
-                decoration: BoxDecoration(
-                  border: Border.all(),
-                ),
-                child: Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      y,
-                      style: TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   @override
@@ -318,14 +247,16 @@ user.updateProfile(profileUpdates)
 
   void updateUserData() async {
     FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    
-    final ref = FirebaseStorage.instance.ref().child("images").child(user.uid + '.png');
+
+    final ref =
+        FirebaseStorage.instance.ref().child("images").child(user.uid + '.png');
     var url = await ref.getDownloadURL() as String;
 
-     DatabaseReference ref2 = FirebaseFunctions.getTraversedChild(['users', user.uid]);
-      ref2.update({'photoUrl' : url});
-      
-      //print ("EXECUTED>>>>>>>>>>>>>>>");
+    DatabaseReference ref2 =
+        FirebaseFunctions.getTraversedChild(['users', user.uid]);
+    ref2.update({'photoUrl': url});
+
+    //print ("EXECUTED>>>>>>>>>>>>>>>");
   }
 
   Widget _uploadButton(StorageUploadTask _uploadTask) {
@@ -352,10 +283,10 @@ user.updateProfile(profileUpdates)
         onPressed: _uploadTask.cancel,
       );
 
-      return Text(
-        "ERROR!",
-        style: TextStyle(fontWeight: FontWeight.w600),
-      );
+    return Text(
+      "ERROR!",
+      style: TextStyle(fontWeight: FontWeight.w600),
+    );
   }
 
   @override
@@ -364,11 +295,6 @@ user.updateProfile(profileUpdates)
       return StreamBuilder<StorageTaskEvent>(
         stream: _uploadTask.events,
         builder: (context, snapshot) {
-          var event = snapshot?.data?.snapshot;
-
-          double progressPercent =
-              event != null ? event.bytesTransferred / event.totalByteCount : 0;
-
           return Center(
             child: _uploadButton(_uploadTask),
           );
