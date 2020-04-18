@@ -1,19 +1,14 @@
-import 'package:biteme/tabs/home/rewards_child.dart';
-import 'package:biteme/widgets/custom_app_bar.dart';
-import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/routes/bookmark_page.dart';
 import 'package:biteme/routes/bar_pages.dart';
 import 'package:biteme/routes/home_page.dart';
 import 'package:biteme/routes/upload_photo.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:biteme/utilities/server_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:biteme/utilities/firebase_functions.dart';
+
 
 class ProfileDetails extends StatefulWidget {
   final FirebaseUser user;
@@ -35,27 +30,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       "To modify any of your details, please tap on the respective field.\nHave a great time using BiteME!";
   String _numCredits = "0";
   String _numReviews = "0";
-  String _numBooks = "0";
   String fullName = "Loading...";
   String imageUrl = "https://images.unsplash.com/photo-1555445091-5a8b655e8a4a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=375&q=80";
   GoogleSignIn googleSignIn = GoogleSignIn();
   var titleController = TextEditingController();
 
-  //static var userid = user;
-  _ProfileDetailsState({this.user, this.signOutGoogle}) {
-    //_getRevs();
-    //_getBookmarks();
-    //_getCredits();
-    //.reloadUser();
-  }
 
-  /*void reloadUser() async {
-    user.reload();
-    user = await FirebaseAuth.instance.currentUser();
-  }*/
+  _ProfileDetailsState({this.user, this.signOutGoogle});
 
   String _getReviews() {
-    //DataSnapshot snapshot1;
     DatabaseReference ref = FirebaseDatabase.instance
         .reference()
         .child("users/" + user.uid + "/history/reviewedProducts");
@@ -68,25 +51,10 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return _numReviews;
   }
 
-  String _getBookmarks() {
-    //DataSnapshot snapshot1;
-    DatabaseReference ref = FirebaseDatabase.instance
-        .reference()
-        .child("users/" + user.uid + "/history/bookmarks");
-    ref.once().then((snapshot) {
-      setState(() {
-        _numBooks = snapshot.value.length.toString() ?? "0";
-      });
-    });
-
-    return _numBooks;
-  }
-
   String _getCredits() {
-    //DataSnapshot snapshot1;
     DatabaseReference ref =
         FirebaseDatabase.instance.reference().child("users/" + user.uid);
-    ref.once().then((snapshot) {
+    ref.once().then((DataSnapshot snapshot) {
       setState(() {
         _numCredits = snapshot.value['credits'].toString();
       });
@@ -95,8 +63,21 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     return _numCredits;
   }
 
+  String _numDiscounts = "Loading...";
+
+  String _getDiscounts() {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.reference().child("users/" + user.uid);
+    ref.once().then((snapshot) {
+      setState(() {
+        _numDiscounts = snapshot.value['discounts'].toString();
+      });
+    });
+
+    return _numDiscounts;
+  }
+
   String _getStatus() {
-    //DataSnapshot snapshot1;
     DatabaseReference ref =
         FirebaseDatabase.instance.reference().child("users/" + user.uid);
     ref.once().then((snapshot) {
@@ -109,7 +90,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   String _getProfilePhoto() {
-    //String imageUrl;
     DatabaseReference ref =
         FirebaseDatabase.instance.reference().child("users/" + user.uid);
     ref.once().then((snapshot) {
@@ -117,10 +97,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         imageUrl = snapshot.value['photoUrl'].toString();
       });
     });
-    //print (imageUrl + "YAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     if (imageUrl == null) imageUrl = "https://cdn.shopify.com/s/files/1/0533/2089/files/placeholder-images-image_large.png?format=jpg&quality=90&v=1530129081";
     return imageUrl;
-    //"https://lh3.googleusercontent.com/a-/AOh14GhxAbSxZwRqfgVCzMaFQ6w-820QZp9ecultK2Gt=s96-c"
   }
 
    String _getName() {
@@ -134,18 +112,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
     });
 
     return fullName;
-  }
-
-  Widget _buildCoverImage(Size screenSize) {
-    return Container(
-      height: screenSize.height / 2.6,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/images/product_placeholder.png'),
-          fit: BoxFit.cover,
-        ),
-      ),
-    );
   }
 
   Widget _buildProfileImage() {
@@ -191,19 +157,9 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         _getName() ?? "Loading...",
         style: _nameTextStyle,
       )
-      : Text ("WORKS"),/*TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: titleController,
-              onSubmitted: (_) => addData,
-            ),*/
+      : Text ("WORKS"),
     );
   }
-
-  /*void addData() async {
-    final String enteredTitle = titleController.text;
-    
-    
-  } */
 
   Widget _buildStatus(BuildContext context) {
     return Container(
@@ -254,10 +210,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   }
 
   Widget _buildStatContainer() {
-    //int abc = (_getNumReviews() as int);
-
-    //_getRevs();
-
+   
     return Container(
       height: 60.0,
       margin: EdgeInsets.only(top: 8.0),
@@ -274,7 +227,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             )),
           ),
           FlatButton(
-            child: _buildStatItem("Bookmarks", _getBookmarks()),
+            child: _buildStatItem("Discounts", _getDiscounts()),
             onPressed: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => BookmarkPage(user: user),
             )),
@@ -299,7 +252,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   Widget _buildBio(BuildContext context) {
     TextStyle bioTextStyle = TextStyle(
       fontFamily: 'Spectral',
-      fontWeight: FontWeight.w400, //try changing weight to w500 if not thin
+      fontWeight: FontWeight.w400, 
       fontStyle: FontStyle.italic,
       color: Color(0xFF799497),
       fontSize: 16.0,
@@ -383,16 +336,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         ],
       ),
     );
-  }
-
-  Widget _signOutBar() {
-    return CustomAppBar(icons: <Widget>[
-      Container(),
-      CustomIconButton(
-        icon: Icons.exit_to_app,
-        onPressed: signOutGoogle,
-      )
-    ]);
   }
 
   @override
