@@ -1,4 +1,5 @@
 import 'package:biteme/models/product.dart';
+import 'package:biteme/tabs/product/product_deals.dart';
 import 'package:biteme/tabs/product/product_details.dart';
 import 'package:biteme/utilities/firebase_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -127,7 +128,7 @@ class _ProductPageState extends State<ProductPage>
           product: product,
           scaffoldKey: _scaffoldKey,
         ),
-        Container(color: Colors.blue)
+        ProductDeals(product:product),
       ])),
       bottomNavigationBar: Card(
         margin: EdgeInsets.all(0),

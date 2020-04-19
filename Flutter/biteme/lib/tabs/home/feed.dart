@@ -1,9 +1,11 @@
 import 'package:biteme/models/product.dart';
 import 'package:biteme/routes/bookmark_page.dart';
 import 'package:biteme/utilities/firebase_functions.dart';
+import 'package:biteme/utilities/server_functions.dart';
 import 'package:biteme/widgets/custom_app_bar.dart';
 import 'package:biteme/widgets/custom_icon_button.dart';
 import 'package:biteme/widgets/grid_list.dart';
+import 'package:biteme/widgets/server_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,14 +15,16 @@ class Feed extends StatelessWidget {
   Feed({this.user});
 
   Future<List<Product>> getRecommendations() async {
-    dynamic firebaseSnapshot = await FirebaseFunctions.getTraversedChild(['users', user.uid, 'recommendations']).once();
+    dynamic firebaseSnapshot = await FirebaseFunctions.getTraversedChild(
+        ['users', user.uid, 'recommendations']).once();
     List<dynamic> firebaseList = firebaseSnapshot.value;
 
     List<Product> _recommendedList = [];
     for (int i = 0; i < firebaseList.length; i++) {
       dynamic snapshot = await FirebaseFunctions.getTraversedChild(
           ['products', firebaseList[i]]).once();
-      _recommendedList.add(Product.fromJson({'key': firebaseList[i], 'value': snapshot.value}));
+      _recommendedList.add(
+          Product.fromJson({'key': firebaseList[i], 'value': snapshot.value}));
     }
     return _recommendedList;
   }
@@ -35,9 +39,19 @@ class Feed extends StatelessWidget {
           CustomIconButton(
               icon: Icons.bookmark,
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => BookmarkPage(user:user),
+                    builder: (context) => BookmarkPage(user: user),
                   ))),
-          CustomIconButton(icon: Icons.refresh, onPressed: () {})
+          CustomIconButton(
+              icon: ServerFunctions.serverIp == null
+                  ? Icons.portable_wifi_off
+                  : Icons.wifi_tethering,
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ServerDialog();
+                    });
+              })
         ],
       ),
       SingleChildScrollView(
@@ -63,15 +77,39 @@ class Feed extends StatelessWidget {
               ),
             ),
             FutureBuilder(
-                future:
-                    getRecommendations(),
+                future: getRecommendations(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
-                    return Center(child: CircularProgressIndicator());
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * .3,
+                  child:Center(child: CircularProgressIndicator()));
                   else {
-                    List<Product> _recommendationsList = snapshot.data == null ? []: snapshot.data;
-                    if(_recommendationsList.isEmpty)
-                      return Text('No recommendation yet!\nPlease wait...');
+                    List<Product> _recommendationsList =
+                        snapshot.data == null ? [] : snapshot.data;
+                    if (_recommendationsList.isEmpty)
+                      return Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * .3,
+                          child: Card(
+                            color: Theme.of(context).canvasColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(25)),
+                              ),
+                              elevation: 0,
+                              child: Container(
+                                  padding: EdgeInsets.all(20),
+                                  child: Center(
+                                      child: Text(
+                                    'No recommendation yet!\nPlease wait...',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w400),
+                                  )))));
                     return GridList(
                       productList: _recommendationsList,
                       user: user,
@@ -91,7 +129,11 @@ class Feed extends StatelessWidget {
                     FirebaseFunctions.getTraversedChild(['products']).onValue,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting)
-                    return Center(child: CircularProgressIndicator());
+                    return Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * .3,
+                        child:Center(child: CircularProgressIndicator()));
                   else {
                     List<Product> _mostReviewedList = [];
                     Map<dynamic, dynamic> values = snapshot.data.snapshot.value;

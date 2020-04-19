@@ -5,11 +5,14 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from sklearn.neighbors import NearestNeighbors
 
+#Recommender engine that makes recommendations based on user interactions
 class RecommenderEngine:
 	data_matrix = None
 	firebaseOps = None
 	THRESHOLD = 0.3
 	CONTENT_WEIGHT = [0.1, 0.9]
+	#Each user action is assigned a value
+	#Higher value indicates more level of interaction with the product
 	ACTION_WEIGHT = {
 		'bookmarks': 4,
 		'viewedProducts': 1,
@@ -20,6 +23,7 @@ class RecommenderEngine:
 	def __init__(self, firebaseOps):
 		self.firebaseOps = firebaseOps
 
+	#Gets all products
 	def __get_products_data(self):
 		data = self.firebaseOps.get_element(['products'], [])
 		data_list = []
@@ -30,7 +34,7 @@ class RecommenderEngine:
 		df = pd.DataFrame(data_list, columns=['id','title','description'])
 		return df
 
-	#gets formatted user data with weights for each product
+	#Gets formatted user data with weights for each product
 	def __get_users_data(self):
 		data = self.firebaseOps.get_element(['users'], [])
 		data_list = []
@@ -54,7 +58,7 @@ class RecommenderEngine:
 		df.fillna(0, inplace=True)
 		self.data_matrix = df
 
-	#gets list of product similarities independent of user
+	#Gets list of product similarities independent of user
 	def recommend_content(self, userId):
 		product_data = self.__get_products_data()
 		tf = TfidfVectorizer(lowercase=True, analyzer='word', min_df=0, stop_words='english')
@@ -75,6 +79,7 @@ class RecommenderEngine:
 		product_query = self.data_matrix.nsmallest(n = 1, columns=userId).index.tolist()[0]
 		return [product[0] for product in product_similarities[product_query] if product[1] >= self.THRESHOLD]
 
+	#Gets list of product recommendations based on user similarity
 	def recommend_collaborative(self, userId):
 		self.__get_users_data()
 
@@ -96,6 +101,7 @@ class RecommenderEngine:
 		recommended_products_list = list(recommended_products_list)
 		return recommended_products_list
 
+	#Combines the two techniques to get a single list
 	def recommend(self):
 		for user in self.firebaseOps.get_element(['users'], []).keys():
 			print('Loading recommendations for user', user,'...')
@@ -104,6 +110,6 @@ class RecommenderEngine:
 			products_recommended.sort()
 			self.firebaseOps.create_element(['users', user, 'recommendations'], products_recommended)
 
-if (__name__ == '__main__'):
-	recommender = RecommenderEngine(FirebaseOps())
-	recommender.recommend()
+#if (__name__ == '__main__'):
+#	recommender = RecommenderEngine(FirebaseOps())
+#=	recommender.recommend()

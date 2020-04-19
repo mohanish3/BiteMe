@@ -24,4 +24,4 @@ class FlipkartSpider(scrapy.Spider):
 		driver.close()
 		driver.quit()
 
-		return {'name':name, 'description':description, 'price':price, 'imageUrl':imageUrl}
+		return {'name':name, 'description':description, 'price':price, 'imageUrl':imageUrl, 'link': response.url}

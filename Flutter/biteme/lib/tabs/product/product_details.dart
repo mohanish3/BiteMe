@@ -93,25 +93,27 @@ class _ProductDetailsState extends State<ProductDetails> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    widget.product.getTitle,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'OpenSans'),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
                   Expanded(
                       child: SingleChildScrollView(
-                    child: Text(
-                      widget.product.getDescription,
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w300,
-                          fontFamily: 'OpenSans'),
-                    ),
+                    child: Column(children: <Widget>[
+                      Text(
+                        widget.product.getTitle,
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'OpenSans'),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        widget.product.getDescription,
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w300,
+                            fontFamily: 'OpenSans'),
+                      )
+                    ]),
                   ))
                 ])),
       )

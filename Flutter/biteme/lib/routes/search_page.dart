@@ -20,6 +20,7 @@ class SearchQueryPage extends StatelessWidget {
     ], [
       ['query', searchQuery]
     ]);
+    print(ServerFunctions.serverIp);
     return jsonDecode(results)['results'];
   }
 
@@ -51,19 +52,29 @@ class SearchQueryPage extends StatelessWidget {
                   return Expanded(
                       child: Center(child: CircularProgressIndicator()));
                 else {
-                  if(snapshot.data == null)
-                    return Container(child:Text('Server down', style: TextStyle(fontSize: 30),));
+                  if (snapshot.data == null)
+                    return Container(
+                      padding: EdgeInsets.all(10),
+                        child: Text(
+                      'Server down',
+                      style:
+                          TextStyle(fontSize: 25, fontStyle: FontStyle.italic),
+                    ));
                   List<Product> _searchResultsList = [];
                   for (var json in snapshot.data) {
                     _searchResultsList.add(Product.fromJson(json));
                   }
-                  if(_searchResultsList == null || _searchResultsList.isEmpty)
-                    return Container(child:Text('No results found!', style: TextStyle(fontSize: 30),));
+                  if (_searchResultsList == null || _searchResultsList.isEmpty)
+                    return Container(
+                        child: Text(
+                      'No results found!',
+                      style: TextStyle(fontSize: 30),
+                    ));
                   else
-                  return SearchResultsList(
-                    searchResultsList: _searchResultsList,
-                    user: user,
-                  );
+                    return SearchResultsList(
+                      searchResultsList: _searchResultsList,
+                      user: user,
+                    );
                 }
               }),
         ]))));

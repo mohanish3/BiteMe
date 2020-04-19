@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:biteme/routes/home_page.dart';
 import 'package:biteme/utilities/firebase_functions.dart';
+import 'package:biteme/widgets/server_dialog.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

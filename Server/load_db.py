@@ -3,6 +3,7 @@ from firebase_ops import FirebaseOps
 
 firebase = FirebaseOps()
 
+#Used to load Firebase with data scraped.
 with open('bite_me_scraping/bite_me_scraping/spiders/items.json') as json_file:
     data = json.load(json_file)
     for product in data:

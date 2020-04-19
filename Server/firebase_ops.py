@@ -2,6 +2,7 @@ import pyrebase
 from getpass import getpass
 from secret import getConfig
 
+#Firebase related operations on the server side
 class FirebaseOps:
 	db = None
 	firebase = None
@@ -15,6 +16,7 @@ class FirebaseOps:
 		self.auth = self.firebase.auth()
 		self.db = self.firebase.database()
 
+	#Autenticates an admin user who can make changes to the entire database
 	def authenticate(self):
 		loggedIn = False
 		while not loggedIn:
@@ -32,19 +34,21 @@ class FirebaseOps:
 			except:
 				print("Incorrect Password!")
 
-
+	#Creates a node in the database
 	def create_element(self, pathList, element):
 		dbRef = self.db
 		for path in pathList:
 			dbRef = dbRef.child(path)
 		dbRef.set(element, self.adminId)
 
+	#Updates a node in the database
 	def update_element(self, pathList, element):
 		dbRef = self.db
 		for path in pathList:
 			dbRef = dbRef.child(path)
 		dbRef.update(element)
 
+	#Gets a node tree from the database
 	def get_element(self, pathList, queryParams):
 		dbRef = self.db
 		for path in pathList:
