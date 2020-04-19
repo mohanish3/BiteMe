@@ -14,13 +14,13 @@ The phone and the server should be on the same WiFi network.
 ```
 ipconfig
 ```  
-![Windows IP](/Screenshots/windows_ip.JPG | width=400)  
+![Windows IP](/Screenshots/windows_ip.JPG){:height="50%" width="50%"}  
   
 ##### Linux  
 ```
 ifconfig
 ```  
-![Linux IP](/Screenshots/linux_ip.JPG | width=400)  
+![Linux IP](/Screenshots/linux_ip.JPG){:height="50%" width="50%"}  
   
 To run the server, we need the following softwares and libraries:  
 1. python3.7  
@@ -40,7 +40,7 @@ python3.7 server.py
   
 ###### Once this is done, we need to tell our app our IP after sign in.  
 **Steps**:  
-![App Server](/Screenshots/app_server.jpeg | width=250)  
-![App IP](/Screenshots/app_ip.jpeg | width=250)  
+![App Server](/Screenshots/app_server.jpeg){:height="50%" width="50%"}  
+![App IP](/Screenshots/app_ip.jpeg){:height="50%" width="50%"}  
   
 ### Enjoy! Feel free to reach out to give your much valued feedback.  
