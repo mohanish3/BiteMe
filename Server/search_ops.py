@@ -1,13 +1,14 @@
 from fuzzywuzzy import fuzz
 import pandas as pd
 
+#Used to search database for a fuzzy search on a string
 class SearchOps:
 	firebaseOps = None
 
 	def __init__(self, firebaseOps):
 		self.firebaseOps = firebaseOps
 
-
+	#Gets products, finds the most matching products and returns a dict with a list of these product ids
 	def search_query(self, query, pathList):
 		productsOrderedDict = self.firebaseOps.get_element(pathList, [])
 		

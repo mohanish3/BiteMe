@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:http/http.dart';
 
 class ServerFunctions {
-  static const serverIp = 'http://192.168.43.41:3000';
+  static var serverIp;
 
   static dynamic getRequest(List<String> pathList, List<List<String>> args) async {
     String urlRequest = serverIp;

@@ -71,46 +71,50 @@ class _AddReviewState extends State<AddReview> {
     user = await FirebaseAuth.instance.currentUser();
 
     bool alreadyReviewed = false;
-    DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'history', 'reviewedProducts']);
+    DatabaseReference ref = FirebaseFunctions.getTraversedChild(
+        ['users', user.uid, 'history', 'reviewedProducts']);
     ref.once().then((snapshot) {
       //Binary search to find least element greater than the key
       List<dynamic> productsReviewedList;
-      if(snapshot.value == null)
+      if (snapshot.value == null)
         productsReviewedList = [];
       else
         productsReviewedList = new List<String>.from(snapshot.value);
       int lb = 0;
       int ub = productsReviewedList.length;
-      while(lb < ub) {
-        int mid = ((lb + ub)/2).floor();
-        if(productsReviewedList[mid].compareTo(widget.productId) <= 0)
+      while (lb < ub) {
+        int mid = ((lb + ub) / 2).floor();
+        if (productsReviewedList[mid].compareTo(widget.productId) <= 0)
           lb = mid + 1;
         else
           ub = mid;
       }
 
       //Insert in the list if the productId does not already exist in it
-      if(lb == 0)
+      if (lb == 0)
         productsReviewedList.insert(0, widget.productId);
-      else if(productsReviewedList[lb - 1] == widget.productId) {
+      else if (productsReviewedList[lb - 1] == widget.productId) {
         alreadyReviewed = true;
         return;
-      }
-      else {
+      } else {
         productsReviewedList.insert(lb, widget.productId);
       }
 
-
-      /*ServerFunctions.postRequest([
-          'gradeReview'
-        ], [
-          ['user', user.uid],
-          ['product', widget.productId],
-          ['review', enteredDescription]
-        ]).then((value){DatabaseReference ref = FirebaseFunctions.getTraversedChild(['users', user.uid, 'credits']);
-      ref.once().then((credits) =>
-        ref.set(int.parse(value) + credits.value)
-      );*/
+      ServerFunctions.postRequest([
+        'gradeReview'
+      ], [
+        ['user', user.uid],
+        ['product', widget.productId],
+        ['review', enteredDescription]
+      ]).then((value) {
+        if (value != null) {
+          DatabaseReference ref = FirebaseFunctions.getTraversedChild(
+              ['users', user.uid, 'credits']);
+          ref
+              .once()
+              .then((credits) => ref.set(int.parse(value) + credits.value));
+        }
+      });
       Review review = Review(
           title: enteredTitle,
           description: enteredDescription,
@@ -118,15 +122,15 @@ class _AddReviewState extends State<AddReview> {
           rating: selectedStars,
           authorName: user.displayName,
           authorId: user.uid);
-          DatabaseReference reviewsRef = FirebaseFunctions.getTraversedChild(
-              ['products', widget.productId, 'reviews']);
-          DatabaseReference newRef = reviewsRef.push();
-          newRef.set(review.toJson());
+      DatabaseReference reviewsRef = FirebaseFunctions.getTraversedChild(
+          ['products', widget.productId, 'reviews']);
+      DatabaseReference newRef = reviewsRef.push();
+      newRef.set(review.toJson());
       //});
       ref.set(productsReviewedList);
     });
 
-    if(alreadyReviewed) {
+    if (alreadyReviewed) {
       print("ALREADY Done!");
       _displaySnackbar(context, 'Already reviewed!');
     }

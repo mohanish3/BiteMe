@@ -99,7 +99,7 @@ class _ProductCardState extends State<ProductCard> {
               Expanded(
                   child: Text(
                 widget.product.getTitle,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 overflow: TextOverflow.fade,
                 textAlign: TextAlign.center,
               )),

@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _tabController = new TabController(length: 5, vsync: this, initialIndex: selectedIndex ?? 0,);
+    _tabController = new TabController(length: 4, vsync: this, initialIndex: selectedIndex ?? 0,);
     _tabController.addListener(_setSelectedIndex);
   }
 
@@ -84,7 +84,6 @@ class _HomePageState extends State<HomePage>
           scaffoldKey: _scaffoldKey,
           user: user,
         ),
-        Container(color: Colors.red),
         Rewards(user: user, signOutGoogle: signOutGoogle,),
         ProfileDetails(user: user, signOutGoogle: signOutGoogle)
       ]),
@@ -114,15 +113,6 @@ class _HomePageState extends State<HomePage>
                   'Search',
                   overflow: TextOverflow.fade,
                   textScaleFactor: 0.8,
-                ),
-              ),
-              Tab(
-                icon: Icon(Icons.whatshot),
-                child: Text(
-                  'Hot\nDeals',
-                  overflow: TextOverflow.fade,
-                  textScaleFactor: 0.69,
-                  textAlign: TextAlign.center,
                 ),
               ),
               Tab(
