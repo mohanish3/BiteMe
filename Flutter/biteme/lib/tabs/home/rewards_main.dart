@@ -1,13 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:biteme/utilities/server_functions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:flutter/material.dart';
-import 'package:biteme/utilities/firebase_functions.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:biteme/utilities/viewport_offset.dart';
-import 'package:biteme/widgets/reward_template.dart';
+
 import 'package:biteme/tabs/home/rewards_child.dart';
 
 class Rewards extends StatefulWidget {
@@ -24,13 +18,6 @@ class Rewards extends StatefulWidget {
 class _RewardsState extends State<Rewards> {
   final FirebaseUser user;
   final Function signOutGoogle;
-  bool _showAppbar = true; //this is to show app bar
-  ScrollController _scrollBottomBarController =
-      new ScrollController(); // set controller on scrolling
-  bool isScrollingDown = false;
-  bool _show = true;
-  double bottomBarHeight = 75; // set bottom bar height
-  double _bottomBarOffset = 0;
   List<dynamic> rewardTemplate = [];
 
   _RewardsState({this.user, this.signOutGoogle});
@@ -38,12 +25,10 @@ class _RewardsState extends State<Rewards> {
   @override
   void initState() {
     super.initState();
-    myScroll();
     DatabaseReference ref =
         FirebaseDatabase.instance.reference().child("rewards");
     ref.once().then((snapshot) {
       var keys = snapshot.value.keys;
-      var data = snapshot.value;
 
       rewardTemplate.clear();
 
@@ -54,45 +39,6 @@ class _RewardsState extends State<Rewards> {
       setState(() {
         //print ("Length = $rewTemp.length");
       });
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollBottomBarController.removeListener(() {});
-    super.dispose();
-  }
-
-  void showBottomBar() {
-    setState(() {
-      _show = true;
-    });
-  }
-
-  void hideBottomBar() {
-    setState(() {
-      _show = false;
-    });
-  }
-
-  void myScroll() async {
-    _scrollBottomBarController.addListener(() {
-      if (_scrollBottomBarController.position.userScrollDirection ==
-          ScrollDirection.reverse) {
-        if (!isScrollingDown) {
-          isScrollingDown = true;
-          _showAppbar = false;
-          hideBottomBar();
-        }
-      }
-      if (_scrollBottomBarController.position.userScrollDirection ==
-          ScrollDirection.forward) {
-        if (isScrollingDown) {
-          isScrollingDown = false;
-          _showAppbar = true;
-          showBottomBar();
-        }
-      }
     });
   }
 
